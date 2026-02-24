@@ -1,0 +1,48 @@
+# ISD-OMS — Development Environment
+#
+# Usage:
+#   mkdir -p data backups
+#   cp backend/.env.example backend/.env   # then edit JWT_SECRET
+#   docker-compose up
+#
+# Services:
+#   backend  → http://localhost:3001  (Express API, hot-reload via ts-node-dev)
+#   frontend → http://localhost:3000  (Vite dev server)
+
+version: '3.9'
+
+services:
+  # ── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      target: dev                    # Uses the 'dev' stage (ts-node-dev + hot reload)
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/src:/app/src       # Hot-reload source changes
+      - ./backend/prisma:/app/prisma # Schema + migration changes
+      - ./data:/data                 # SQLite database (DATABASE_URL=file:/data/isd_oms.db)
+      - ./backups:/backups
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:/data/isd_oms.db   # Override .env path for Docker
+    restart: unless-stopped
+
+  # ── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      target: dev                    # Uses the 'dev' stage (Vite dev server)
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src      # Hot-reload source changes
+      - ./frontend/public:/app/public
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001/api/v1
+    depends_on:
+      - backend
+    restart: unless-stopped

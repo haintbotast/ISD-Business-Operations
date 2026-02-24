@@ -1,0 +1,52 @@
+# ISD-OMS — Production Environment
+#
+# Usage:
+#   mkdir -p data backups
+#   cp backend/.env.example backend/.env   # then set production values
+#   docker-compose -f docker-compose.prod.yml up -d
+#
+# ⚠️  Before deploying to production:
+#   1. Set a strong JWT_SECRET in backend/.env
+#   2. Change all default passwords (admin/editor/viewer)
+#   3. Configure FRONTEND_URL in backend/.env (for CORS)
+#   4. Point a reverse proxy (nginx/Caddy) to ports 3001 and 80
+
+version: '3.9'
+
+services:
+  # ── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      target: runner                 # Uses the optimized production runner stage
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./data:/data                 # SQLite database (persistent)
+      - ./backups:/backups           # Backup storage (persistent)
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/data/isd_oms.db
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s             # Allow time for migrations + seed on first run
+
+  # ── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      target: runner                 # Uses nginx stage serving built SPA
+      args:
+        - VITE_API_BASE_URL=/api/v1  # Proxied through nginx — same-origin
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: always

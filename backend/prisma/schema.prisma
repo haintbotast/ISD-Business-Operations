@@ -1,0 +1,130 @@
+// Prisma schema for ISD-OMS
+// Source of truth: docs/02_PRD_Product_Requirements_Document.md Section 6.2
+// SQLite provider — WAL mode configured in backend/src/config/database.ts
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Core Business Entity ────────────────────────────────────────────────────
+
+model Event {
+  id              String    @id @default(cuid())
+  year            Int
+  weekCode        String    @map("week_code")
+  date            DateTime
+  locationCode    String    @map("location_code")
+  mainGroup       String    @map("main_group")
+  category        String
+  systemComponent String?   @map("system_component")
+  description     String
+  impact          String?
+  rootCause       String?   @map("root_cause")
+  resolution      String?
+  downtimeMinutes Int?      @map("downtime_minutes")
+  classification  String    // "Good" | "Bad"
+  severity        String    @default("Medium") // Critical | High | Medium | Low
+  status          String    @default("Open")   // Open | In Progress | Resolved | Closed
+  version         Int       @default(1)        // OCC — NEVER remove this field
+  deletedAt       DateTime? @map("deleted_at") // Soft delete — NEVER hard delete
+  createdBy       String?   @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  weekRef  WeekReference  @relation(fields: [year, weekCode], references: [year, weekCode])
+  location LocationMaster @relation(fields: [locationCode], references: [code])
+
+  @@map("events")
+}
+
+// ─── Reference / Lookup Tables ───────────────────────────────────────────────
+
+model WeekReference {
+  year      Int
+  weekCode  String   @map("week_code") // e.g. "W01", "W53"
+  startDate DateTime @map("start_date") // Monday of this ISO week
+  endDate   DateTime @map("end_date")   // Sunday of this ISO week
+  events    Event[]
+
+  @@id([year, weekCode]) // Composite PK — prevents W01/2025 vs W01/2026 collision
+  @@map("week_references")
+}
+
+model LocationMaster {
+  id        String   @id @default(cuid())
+  code      String   @unique           // e.g. "KDAMB", "HO"
+  fullName  String   @map("full_name")
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  events    Event[]
+
+  @@map("location_master")
+}
+
+model CategoryMaster {
+  id             String   @id @default(cuid())
+  mainGroup      String   @map("main_group")
+  category       String
+  classification String   @default("Bad") // Default Good/Bad for this category type
+  isActive       Boolean  @default(true) @map("is_active")
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([mainGroup, category])
+  @@map("category_master")
+}
+
+// ─── Users & Security ────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  displayName  String   @map("display_name")
+  role         String   @default("Viewer") // Admin | Editor | Viewer
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  action     String   // create | update | delete
+  entityType String   @map("entity_type") // e.g. "event"
+  entityId   String   @map("entity_id")
+  oldValues  String?  @map("old_values") // JSON string
+  newValues  String?  @map("new_values") // JSON string
+  timestamp  DateTime @default(now())
+
+  @@index([entityId])
+  @@index([userId])
+  @@map("audit_log")
+}
+
+// ─── Draft Auto-save (FR-001) ────────────────────────────────────────────────
+
+model EventDraft {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  eventKey  String   @map("event_key") // event UUID or literal "new"
+  formData  String   @map("form_data") // JSON string — full form state
+  expiresAt DateTime @map("expires_at") // TTL: 24h from last update
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, eventKey])
+  @@map("event_drafts")
+}
+
+// ─── v1.1 Placeholder (DO NOT implement in v1.0) ─────────────────────────────
+// field_definitions table is intentionally NOT created in v1.0.
+// Schema will be added in the v1.1 migration sprint.
+// events.extra_fields column will also be added in v1.1.

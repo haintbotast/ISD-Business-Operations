@@ -5,9 +5,10 @@
 
 ---
 
-## Current Status: Sprint 1 — NOT STARTED
+## Current Status: Sprint 1 — Phase 3 IN PROGRESS
 
-**Next action:** Start with [Phase 1: Project Scaffold](#phase-1-project-scaffold--s1-001--s1-006)
+**Completed:** Phase 1 ✅ | Phase 2 ✅
+**Next action:** [Phase 3: Frontend Scaffold](#phase-3-frontend-scaffold-s1-011--s1-021)
 
 ---
 
@@ -15,23 +16,23 @@
 
 _Backend foundation — do these first, in order._
 
-- [ ] **S1-001** `backend/` — Init Node.js + TypeScript project (`npm init`, `tsconfig.json`, `eslint`)
-- [ ] **S1-002** `backend/` — Install Express + Prisma + dependencies (see `backend/CLAUDE.md` for full list)
-- [ ] **S1-003** `backend/prisma/schema.prisma` — Define full schema (Event, User, WeekReference, LocationMaster, CategoryMaster, AuditLog, EventDraft)
-- [ ] **S1-004** `backend/src/config/database.ts` — Prisma client + SQLite WAL PRAGMAs
-- [ ] **S1-005** `backend/prisma/seed.ts` — Seed users (admin/editor/viewer) + locations (KDAMB, KDAMN, Offshore, HO) + categories
-- [ ] **S1-006** `docker-compose.yml` + `docker-compose.prod.yml` — 2 containers: frontend + backend (no DB service)
+- [x] **S1-001** `backend/` — Init Node.js + TypeScript project (`npm init`, `tsconfig.json`, `eslint`)
+- [x] **S1-002** `backend/` — Install Express + Prisma + dependencies (see `backend/CLAUDE.md` for full list)
+- [x] **S1-003** `backend/prisma/schema.prisma` — Define full schema (Event, User, WeekReference, LocationMaster, CategoryMaster, AuditLog, EventDraft)
+- [x] **S1-004** `backend/src/config/database.ts` — Prisma client + SQLite WAL PRAGMAs
+- [x] **S1-005** `backend/prisma/seed.ts` — Seed users (admin/editor/viewer) + locations (KDAMB, KDAMN, Offshore, HO) + categories
+- [x] **S1-006** `docker-compose.yml` + `docker-compose.prod.yml` — 2 containers: frontend + backend (no DB service)
 
 ---
 
 ## Phase 2: Backend Auth + Events API (S1-007 – S1-010, S1-018, S1-022)
 
-- [ ] **S1-007** `backend/src/middleware/auth.ts` + `rbac.ts` — JWT auth middleware + `requireRole()`
-- [ ] **S1-008** `backend/src/routes/auth.routes.ts` — POST /login, POST /logout, GET /me
-- [ ] **S1-009** `backend/src/routes/event.routes.ts` — Full CRUD: GET/POST/PUT(OCC)/DELETE + soft delete
-- [ ] **S1-010** `backend/src/routes/health.routes.ts` — GET /api/v1/health (no auth)
-- [ ] **S1-018** `backend/src/services/auth.service.ts` — Unit tests (Jest)
-- [ ] **S1-022** `backend/src/routes/event.routes.ts` (draft endpoints) + `event_drafts` table migration — POST/GET /api/v1/events/draft
+- [x] **S1-007** `backend/src/middleware/auth.ts` + `rbac.ts` — JWT auth middleware + `requireRole()`
+- [x] **S1-008** `backend/src/routes/auth.routes.ts` — POST /login, POST /logout, GET /me
+- [x] **S1-009** `backend/src/routes/event.routes.ts` — Full CRUD: GET/POST/PUT(OCC)/DELETE + soft delete
+- [x] **S1-010** `backend/src/routes/health.routes.ts` — GET /api/v1/health (no auth)
+- [ ] **S1-018** `backend/src/services/auth.service.ts` — Unit tests (Jest) ← _deferred to after Phase 3_
+- [x] **S1-022** `backend/src/routes/event.routes.ts` (draft endpoints) + `event_drafts` table migration — POST/GET /api/v1/events/draft
 
 ---
 
@@ -78,6 +79,7 @@ _Start after Phase 1 backend is running._
 
 ## Notes / Blockers
 
-_Add session notes here as work progresses._
-
-- (empty)
+- **Phase 1+2 completed** (session 3). Backend fully scaffolded: 7-model Prisma schema, full CRUD API with OCC, SSE, JWT auth, draft auto-save, audit log, soft delete.
+- **S1-018** (auth service unit tests) deferred after Phase 3 to keep sprint momentum.
+- **Categories in seed.ts** are placeholders — must be updated from `BS24_ISD_Operations_Template_2026.xlsx` sheet `03_DANH_MUC` before production.
+- **docker-compose DATABASE_URL override**: Dev docker-compose sets `DATABASE_URL=file:/data/isd_oms.db` (absolute path inside container) to override the relative `.env` path.
