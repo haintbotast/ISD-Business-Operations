@@ -42,6 +42,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Claude Code — local user settings (machine-specific)
+.claude/settings.local.json
+
 # Testing
 coverage/
 .nyc_output/
