@@ -9,6 +9,7 @@ import healthRouter from './routes/health.routes';
 import authRouter from './routes/auth.routes';
 import eventRouter from './routes/event.routes';
 import masterRouter from './routes/master.routes';
+import dashboardRouter from './routes/dashboard.routes';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventRouter);
+app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1', masterRouter); // /categories, /locations
 
 // 404 handler for unknown routes

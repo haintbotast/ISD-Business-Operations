@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ArrowLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
-import { useAuth } from '@/hooks/useAuth';
 import { currentIsoYear, currentWeekCode } from '@/lib/utils';
 import { ClassificationBadge } from '@/components/shared/ClassificationBadge';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,6 @@ export function EventForm({ eventId }: EventFormProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   const isEditMode = !!eventId;
 

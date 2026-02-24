@@ -113,11 +113,26 @@
   },
   "dashboard": {
     "title": "Tổng quan",
-    "totalEvents": "Tổng sự kiện",
-    "incidentRate": "Tỷ lệ sự cố",
-    "avgDowntime": "Thời gian ngừng TB",
-    "resolvedRate": "Tỷ lệ giải quyết",
+    "loadError": "Không thể tải dữ liệu dashboard",
+    "retry": "Thử lại",
+    "trendChart": "Biểu đồ xu hướng theo danh mục",
+    "statusDistribution": "Phân bố theo mức độ",
+    "detailTable": "Chi tiết sự kiện",
+    "daysOpen": "Số ngày mở",
+    "statusSplit": "Mở {{open}} • Đóng {{closed}}",
     "timeRange": "Khoảng thời gian",
+    "kpis": {
+      "totalEvents": "Tổng sự kiện",
+      "downtimeMinutes": "Downtime (phút)",
+      "closureRate": "Tỷ lệ đóng (%)",
+      "severeIncidents": "Sự kiện nghiêm trọng",
+      "openInProgress": "Open/In Progress"
+    },
+    "presets": {
+      "current": "Kỳ này",
+      "recent": "Gần đây",
+      "ytd": "YTD"
+    },
     "granularity": {
       "week": "Tuần",
       "month": "Tháng",

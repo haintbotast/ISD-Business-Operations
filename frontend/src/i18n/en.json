@@ -113,11 +113,26 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "totalEvents": "Total Events",
-    "incidentRate": "Incident Rate",
-    "avgDowntime": "Avg Downtime",
-    "resolvedRate": "Resolution Rate",
+    "loadError": "Failed to load dashboard data",
+    "retry": "Retry",
+    "trendChart": "Category trend chart",
+    "statusDistribution": "Status distribution by severity",
+    "detailTable": "Event details",
+    "daysOpen": "Days open",
+    "statusSplit": "Open {{open}} • Closed {{closed}}",
     "timeRange": "Time Range",
+    "kpis": {
+      "totalEvents": "Total Events",
+      "downtimeMinutes": "Downtime (mins)",
+      "closureRate": "Closure Rate (%)",
+      "severeIncidents": "Severe incidents",
+      "openInProgress": "Open/In Progress"
+    },
+    "presets": {
+      "current": "Current",
+      "recent": "Recent",
+      "ytd": "YTD"
+    },
     "granularity": {
       "week": "Week",
       "month": "Month",

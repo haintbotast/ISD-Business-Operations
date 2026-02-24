@@ -80,29 +80,29 @@ _Start after Phase 1 backend is running._
 Source playbook: `docs/05_SPRINT2_DASHBOARD_EXECUTION_PLAYBOOK.md`
 
 #### WS-A Backend API (S2-001, S2-002, S2-016 backend part)
-- [ ] A1. Create `backend/src/routes/dashboard.routes.ts` with query validation.
-- [ ] A2. Create `backend/src/services/dashboard.service.ts` for KPI + status aggregation.
-- [ ] A3. Implement `GET /api/v1/dashboard/summary`.
-- [ ] A4. Implement `GET /api/v1/dashboard/chart`.
-- [ ] A5. Mount dashboard router in `backend/src/app.ts`.
-- [ ] A6. Add dashboard DTO types in `backend/src/types/index.ts`.
+- [x] A1. Create `backend/src/routes/dashboard.routes.ts` with query validation.
+- [x] A2. Create `backend/src/services/dashboard.service.ts` for KPI + status aggregation.
+- [x] A3. Implement `GET /api/v1/dashboard/summary`.
+- [x] A4. Implement `GET /api/v1/dashboard/chart`.
+- [x] A5. Mount dashboard router in `backend/src/app.ts`.
+- [x] A6. Add dashboard DTO types in `backend/src/types/index.ts`.
 
 #### WS-B Frontend data hooks/types (S2-012 foundation)
-- [ ] B1. Add dashboard response types in `frontend/src/types/index.ts`.
-- [ ] B2. Add `frontend/src/hooks/useDashboard.ts` with summary/chart hooks.
-- [ ] B3. Wire query keys + SSE invalidation compatibility (`dashboard` prefix).
-- [ ] B4. Handle loading/empty/error states consistently for dashboard data.
+- [x] B1. Add dashboard response types in `frontend/src/types/index.ts`.
+- [x] B2. Add `frontend/src/hooks/useDashboard.ts` with summary/chart hooks.
+- [x] B3. Wire query keys + SSE invalidation compatibility (`dashboard` prefix).
+- [x] B4. Handle loading/empty/error states consistently for dashboard data.
 
 #### WS-C Frontend dashboard UI (S2-003 → S2-014)
-- [ ] C1. Create `TimeRangeSelector` component (week/month/quarter/year + presets).
-- [ ] C2. Create `KpiCard` component with sparkline + delta badge.
-- [ ] C3. Create `TrendChart` component (ECharts stacked bar).
-- [ ] C4. Create `StatusDistribution` component.
-- [ ] C5. Create `DetailTable` component.
-- [ ] C6. Replace placeholder `frontend/src/pages/DashboardPage.tsx` with real grid layout.
-- [ ] C7. Implement KPI click drill-down behavior for detail table.
-- [ ] C8. Add skeleton loading states for all dashboard panels.
-- [ ] C9. Add/update dashboard i18n keys in `frontend/src/i18n/vi.json` and `frontend/src/i18n/en.json`.
+- [x] C1. Create `TimeRangeSelector` component (week/month/quarter/year + presets).
+- [x] C2. Create `KpiCard` component with sparkline + delta badge.
+- [x] C3. Create `TrendChart` component (ECharts stacked bar).
+- [x] C4. Create `StatusDistribution` component.
+- [x] C5. Create `DetailTable` component.
+- [x] C6. Replace placeholder `frontend/src/pages/DashboardPage.tsx` with real grid layout.
+- [x] C7. Implement KPI click drill-down behavior for detail table.
+- [x] C8. Add skeleton loading states for all dashboard panels.
+- [x] C9. Add/update dashboard i18n keys in `frontend/src/i18n/vi.json` and `frontend/src/i18n/en.json`.
 
 #### WS-D Validation/performance/regression
 - [ ] D1. Add backend integration tests for dashboard endpoints (`backend/tests/integration/dashboard.test.ts`).

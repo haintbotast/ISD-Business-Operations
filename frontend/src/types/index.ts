@@ -112,3 +112,63 @@ export interface EventFilters {
   status?: string;
   search?: string;
 }
+
+// ─── Dashboard Types ──────────────────────────────────────────────────────────
+
+export type DashboardGranularity = 'week' | 'month' | 'quarter' | 'year';
+export type DashboardMetricFilter = 'all' | 'open' | 'severe' | 'downtime' | 'closure';
+
+export interface DashboardQueryParams {
+  granularity: DashboardGranularity;
+  year: number;
+  periodStart: string;
+  periodEnd: string;
+  locationCode?: string;
+}
+
+export interface DashboardKpiMetric {
+  value: number;
+  deltaPct: number;
+  sparkline: number[];
+}
+
+export interface DashboardSummaryData {
+  kpis: {
+    totalEvents: DashboardKpiMetric;
+    downtimeMinutes: DashboardKpiMetric;
+    closureRate: DashboardKpiMetric;
+    severeIncidents: DashboardKpiMetric;
+    openInProgress: DashboardKpiMetric;
+  };
+  statusDistribution: {
+    all: { count: number; pct: number };
+    low: { count: number; pct: number; open: number; closed: number };
+    medium: { count: number; pct: number; open: number; closed: number };
+    high: { count: number; pct: number; open: number; closed: number };
+    critical: { count: number; pct: number; open: number; closed: number };
+  };
+  detailRows: DashboardDetailRow[];
+}
+
+export interface DashboardDetailRow {
+  id: string;
+  date: string;
+  weekCode: string;
+  locationCode: string;
+  systemComponent: string | null;
+  description: string;
+  severity: string;
+  status: string;
+  daysOpen: number;
+}
+
+export interface DashboardChartSeries {
+  name: string;
+  classification: 'Good' | 'Bad';
+  data: number[];
+}
+
+export interface DashboardChartData {
+  xAxis: string[];
+  series: DashboardChartSeries[];
+}
