@@ -9,11 +9,13 @@ const api = axios.create({
 });
 
 // Response interceptor — redirect to /login on 401
-// Skip redirect when already on /login (avoids infinite reload from GET /auth/me)
+// Do NOT redirect for /auth/me (handled by useAuth → PrivateRoute → React Router Navigate).
+// Only redirect for other endpoints (session expired mid-use).
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401 && window.location.pathname !== '/login') {
+    const isAuthMe = error.config?.url === '/auth/me';
+    if (error.response?.status === 401 && !isAuthMe) {
       window.location.href = '/login';
     }
     // Unwrap the error body for consistent error handling in components
