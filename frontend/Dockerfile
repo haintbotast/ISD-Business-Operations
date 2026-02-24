@@ -4,7 +4,7 @@ FROM node:20-alpine AS dev
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 
@@ -21,7 +21,7 @@ ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 
