@@ -11,8 +11,6 @@
 #   3. Configure FRONTEND_URL in backend/.env (for CORS)
 #   4. Point a reverse proxy (nginx/Caddy) to ports 3001 and 80
 
-version: '3.9'
-
 services:
   # ── Backend ────────────────────────────────────────────────────────────────
   backend:

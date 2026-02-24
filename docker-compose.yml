@@ -9,8 +9,6 @@
 #   backend  → http://localhost:3001  (Express API, hot-reload via ts-node-dev)
 #   frontend → http://localhost:3000  (Vite dev server, /api proxied to backend)
 
-version: '3.9'
-
 services:
   # ── Backend ────────────────────────────────────────────────────────────────
   backend:
