@@ -5,10 +5,10 @@
 
 ---
 
-## Current Status: Sprint 1 — Phase 3 COMPLETE ✅
+## Current Status: Sprint 1 — COMPLETE ✅ (All AC passed)
 
-**Completed:** Phase 1 ✅ | Phase 2 ✅ | Phase 3 ✅
-**Next action:** Install deps, run `prisma migrate dev`, verify acceptance criteria
+**Completed:** Phase 1 ✅ | Phase 2 ✅ | Phase 3 ✅ | Acceptance Criteria ✅
+**Next action:** Sprint 2 — Dashboard (KpiCard, TrendChart, TimeRangeSelector)
 
 ---
 
@@ -55,15 +55,15 @@ _Start after Phase 1 backend is running._
 
 ## Sprint 1 Acceptance Criteria
 
-- [ ] `mkdir -p data backups && docker-compose up` starts 2 containers (no PostgreSQL)
-- [ ] SQLite `./data/isd_oms.db` auto-created on backend startup
-- [ ] `GET /api/v1/health` → `{"status":"ok","db":"ok","version":"1.0.0"}`
-- [ ] Login with admin/admin123 works
-- [ ] Create event with all fields, appears in list
-- [ ] Edit event — OCC version sent, 409 handled
-- [ ] Event list shows with pagination
-- [ ] Draft auto-saved every 30s, restored on form reopen
-- [ ] Vietnamese UI (react-i18next), no hardcoded strings
+- [x] `mkdir -p data backups && docker-compose up` starts 2 containers (no PostgreSQL)
+- [x] SQLite `./data/isd_oms.db` auto-created on backend startup
+- [x] `GET /api/v1/health` → `{"status":"ok","db":"ok","version":"1.0.0"}`
+- [x] Login with admin/admin123 works
+- [x] Create event with all fields, appears in list
+- [x] Edit event — OCC version sent, 409 handled
+- [x] Event list shows with pagination
+- [x] Draft auto-saved every 30s, restored on form reopen
+- [x] Vietnamese UI (react-i18next), no hardcoded strings
 
 ---
 
@@ -79,8 +79,8 @@ _Start after Phase 1 backend is running._
 
 ## Notes / Blockers
 
-- **Phase 1+2 completed** (session 3). Backend fully scaffolded: 7-model Prisma schema, full CRUD API with OCC, SSE, JWT auth, draft auto-save, audit log, soft delete.
-- **Phase 3 completed** (session 4). Frontend scaffolded: Vite + React 18 + TanStack Query + i18n + Zustand + RHF+Zod + Shadcn/ui. All pages and components created.
+- **Sprint 1 COMPLETE** — All 9 acceptance criteria verified via Docker (`docker-compose up`).
+- **Bugs fixed during verification**: (1) Prisma on Alpine needs `openssl` apk package; (2) SQLite PRAGMAs must use `$queryRawUnsafe` not `$executeRawUnsafe`; (3) `npm ci` → `npm install` (no lockfiles); (4) Vite proxy uses `BACKEND_URL` env var for Docker networking.
 - **S1-018** (auth service unit tests) deferred to Sprint 2.
 - **Categories in seed.ts** are placeholders — must be updated from `BS24_ISD_Operations_Template_2026.xlsx` sheet `03_DANH_MUC` before production.
 - **docker-compose DATABASE_URL override**: Dev docker-compose sets `DATABASE_URL=file:/data/isd_oms.db` (absolute path inside container) to override the relative `.env` path.

@@ -23,8 +23,10 @@ FROM node:20-alpine AS dev
 
 WORKDIR /app
 
+# Install OpenSSL (required by Prisma schema engine on Alpine/musl)
 # Install Chromium for Puppeteer (needed even in dev for PDF tests)
 RUN apk add --no-cache \
+    openssl \
     chromium \
     nss \
     freetype \
@@ -52,8 +54,10 @@ CMD ["npm", "run", "dev"]
 # ── Stage 3: Production runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
+# Install OpenSSL (required by Prisma schema engine on Alpine/musl)
 # Install Chromium and fonts for Puppeteer PDF generation
 RUN apk add --no-cache \
+    openssl \
     chromium \
     nss \
     freetype \

@@ -23,17 +23,13 @@ export async function initDatabase(): Promise<void> {
   }
 
   // SQLite WAL mode — concurrent reads while writing, crash-safe
-  await prisma.$executeRawUnsafe('PRAGMA journal_mode=WAL;');
-  // NORMAL: data flushed to WAL file per commit — safe + faster than FULL
-  await prisma.$executeRawUnsafe('PRAGMA synchronous=NORMAL;');
-  // Wait up to 5s when another connection holds a write lock
-  await prisma.$executeRawUnsafe('PRAGMA busy_timeout=5000;');
-  // Enforce foreign key constraints
-  await prisma.$executeRawUnsafe('PRAGMA foreign_keys=ON;');
-  // 64MB page cache for performance
-  await prisma.$executeRawUnsafe('PRAGMA cache_size=-64000;');
-  // Store temp tables in memory
-  await prisma.$executeRawUnsafe('PRAGMA temp_store=MEMORY;');
+  // Use $queryRawUnsafe for all PRAGMAs — SQLite returns result rows even for setters
+  await prisma.$queryRawUnsafe('PRAGMA journal_mode=WAL;');
+  await prisma.$queryRawUnsafe('PRAGMA synchronous=NORMAL;');
+  await prisma.$queryRawUnsafe('PRAGMA busy_timeout=5000;');
+  await prisma.$queryRawUnsafe('PRAGMA foreign_keys=ON;');
+  await prisma.$queryRawUnsafe('PRAGMA cache_size=-64000;');
+  await prisma.$queryRawUnsafe('PRAGMA temp_store=MEMORY;');
 
   // Periodic WAL checkpoint — merge WAL into main DB file
   // Set WAL_CHECKPOINT_INTERVAL_MS=0 to disable (SQLite auto-checkpoints at 1000 pages)
@@ -41,7 +37,7 @@ export async function initDatabase(): Promise<void> {
   if (intervalMs > 0) {
     setInterval(async () => {
       try {
-        await prisma.$executeRawUnsafe('PRAGMA wal_checkpoint(PASSIVE);');
+        await prisma.$queryRawUnsafe('PRAGMA wal_checkpoint(PASSIVE);');
       } catch (error) {
         console.error('[DB] WAL checkpoint error:', error);
       }
