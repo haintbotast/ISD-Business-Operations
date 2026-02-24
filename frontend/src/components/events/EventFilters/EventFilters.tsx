@@ -26,7 +26,7 @@ export function EventFilters() {
 
   const { data: locations = [] } = useQuery<LocationMaster[]>({
     queryKey: ['locations'],
-    queryFn: () => api.get('/categories/locations').then((r) => r.data.data),
+    queryFn: () => api.get('/locations').then((r) => r.data.data),
     staleTime: 5 * 60_000,
   });
 
@@ -77,8 +77,8 @@ export function EventFilters() {
 
       {/* Main group (category) */}
       <Select
-        value={eventFilters.locationCode || '__all__'}
-        onValueChange={(v) => setEventFilters({ locationCode: v === '__all__' ? '' : v })}
+        value={eventFilters.mainGroup || '__all__'}
+        onValueChange={(v) => setEventFilters({ mainGroup: v === '__all__' ? '' : v })}
       >
         <SelectTrigger className="w-40">
           <SelectValue placeholder={t('event.filters.allCategories')} />

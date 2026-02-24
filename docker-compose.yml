@@ -3,11 +3,11 @@
 # Usage:
 #   mkdir -p data backups
 #   cp backend/.env.example backend/.env   # then edit JWT_SECRET
-#   docker-compose up
+#   docker-compose up --build
 #
 # Services:
 #   backend  → http://localhost:3001  (Express API, hot-reload via ts-node-dev)
-#   frontend → http://localhost:3000  (Vite dev server)
+#   frontend → http://localhost:3000  (Vite dev server, /api proxied to backend)
 
 version: '3.9'
 
@@ -17,11 +17,18 @@ services:
     build:
       context: ./backend
       target: dev                    # Uses the 'dev' stage (ts-node-dev + hot reload)
+    # Run migrations + seed on every startup (upserts are idempotent), then start dev server
+    command: >
+      sh -c "
+        npx prisma migrate dev --name init --skip-seed --skip-generate &&
+        npx prisma db seed &&
+        npm run dev
+      "
     ports:
       - "3001:3001"
     volumes:
       - ./backend/src:/app/src       # Hot-reload source changes
-      - ./backend/prisma:/app/prisma # Schema + migration changes
+      - ./backend/prisma:/app/prisma # Schema + migration files (written back to host)
       - ./data:/data                 # SQLite database (DATABASE_URL=file:/data/isd_oms.db)
       - ./backups:/backups
     env_file:
@@ -42,7 +49,9 @@ services:
       - ./frontend/src:/app/src      # Hot-reload source changes
       - ./frontend/public:/app/public
     environment:
-      - VITE_API_BASE_URL=http://localhost:3001/api/v1
+      # BACKEND_URL tells vite.config.ts proxy where to forward /api requests.
+      # Inside Docker, use the service name 'backend', not localhost.
+      - BACKEND_URL=http://backend:3001
     depends_on:
       - backend
     restart: unless-stopped

@@ -18,8 +18,11 @@ out/
 .env.production
 
 # SQLite database files (runtime data — not source code)
-data/
-backups/
+# Keep the empty directories via .gitkeep, but ignore actual data files
+data/*
+!data/.gitkeep
+backups/*
+!backups/.gitkeep
 *.db
 *.db-shm
 *.db-wal

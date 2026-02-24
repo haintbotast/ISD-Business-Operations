@@ -12,10 +12,12 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: '0.0.0.0',    // Required for Docker — listen on all interfaces
     proxy: {
-      // Proxy API calls to backend in dev (avoids CORS)
+      // BACKEND_URL allows Docker to override to http://backend:3001
+      // Local dev: http://localhost:3001 (default)
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.BACKEND_URL ?? 'http://localhost:3001',
         changeOrigin: true,
       },
     },

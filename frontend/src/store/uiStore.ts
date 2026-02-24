@@ -24,6 +24,7 @@ interface UIStore {
     year: number;
     weekCode: string;
     locationCode: string;
+    mainGroup: string;
     classification: string;
     status: string;
     search: string;
@@ -39,6 +40,7 @@ const defaultEventFilters = {
   year: currentYear,
   weekCode: '',
   locationCode: '',
+  mainGroup: '',
   classification: '',
   status: '',
   search: '',

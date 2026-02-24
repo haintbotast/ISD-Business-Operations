@@ -66,7 +66,7 @@ export function EventForm({ eventId }: EventFormProps) {
 
   const { data: locations = [] } = useQuery<LocationMaster[]>({
     queryKey: ['locations'],
-    queryFn: () => api.get('/categories/locations').then((r) => r.data.data),
+    queryFn: () => api.get('/locations').then((r) => r.data.data),
     staleTime: 5 * 60_000,
   });
 
