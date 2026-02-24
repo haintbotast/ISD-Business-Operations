@@ -1,0 +1,1 @@
+export { ClassificationBadge } from './ClassificationBadge';

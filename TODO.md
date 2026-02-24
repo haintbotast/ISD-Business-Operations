@@ -5,10 +5,10 @@
 
 ---
 
-## Current Status: Sprint 1 — Phase 3 IN PROGRESS
+## Current Status: Sprint 1 — Phase 3 COMPLETE ✅
 
-**Completed:** Phase 1 ✅ | Phase 2 ✅
-**Next action:** [Phase 3: Frontend Scaffold](#phase-3-frontend-scaffold-s1-011--s1-021)
+**Completed:** Phase 1 ✅ | Phase 2 ✅ | Phase 3 ✅
+**Next action:** Install deps, run `prisma migrate dev`, verify acceptance criteria
 
 ---
 
@@ -31,7 +31,7 @@ _Backend foundation — do these first, in order._
 - [x] **S1-008** `backend/src/routes/auth.routes.ts` — POST /login, POST /logout, GET /me
 - [x] **S1-009** `backend/src/routes/event.routes.ts` — Full CRUD: GET/POST/PUT(OCC)/DELETE + soft delete
 - [x] **S1-010** `backend/src/routes/health.routes.ts` — GET /api/v1/health (no auth)
-- [ ] **S1-018** `backend/src/services/auth.service.ts` — Unit tests (Jest) ← _deferred to after Phase 3_
+- [ ] **S1-018** `backend/src/services/auth.service.ts` — Unit tests (Jest) ← _deferred to Sprint 2_
 - [x] **S1-022** `backend/src/routes/event.routes.ts` (draft endpoints) + `event_drafts` table migration — POST/GET /api/v1/events/draft
 
 ---
@@ -40,16 +40,16 @@ _Backend foundation — do these first, in order._
 
 _Start after Phase 1 backend is running._
 
-- [ ] **S1-011** `frontend/` — Init Vite + React 18 + TypeScript; install all deps; configure Shadcn/ui
-- [ ] **S1-019** `frontend/src/main.tsx` — Setup TanStack Query (`QueryClient`, `QueryClientProvider`, devtools)
-- [ ] **S1-020** `frontend/src/` — Setup React Hook Form + Zod (EventForm schema, LoginForm schema)
-- [ ] **S1-021** `frontend/src/i18n/` — Setup react-i18next (`i18n.ts`, `vi.json`, `en.json` with initial keys)
-- [ ] **S1-012** `frontend/src/pages/LoginPage.tsx` — Login form with RHF + Zod + auth mutation
-- [ ] **S1-013** `frontend/src/components/shared/Layout/` — Main layout: sidebar + header + outlet
-- [ ] **S1-014** `frontend/src/pages/EventsPage.tsx` — Event list with pagination table
-- [ ] **S1-016** `frontend/src/components/events/EventFilters/` — Filter panel (week, location, category, status)
-- [ ] **S1-015** `frontend/src/components/events/EventForm/` — Create/edit form + draft auto-save (30s)
-- [ ] **S1-017** `frontend/src/` — Good/Bad classification badge in EventForm + EventList
+- [x] **S1-011** `frontend/` — Init Vite + React 18 + TypeScript; install all deps; configure Shadcn/ui
+- [x] **S1-019** `frontend/src/main.tsx` — Setup TanStack Query (`QueryClient`, `QueryClientProvider`, devtools)
+- [x] **S1-020** `frontend/src/` — Setup React Hook Form + Zod (EventForm schema, LoginForm schema)
+- [x] **S1-021** `frontend/src/i18n/` — Setup react-i18next (`i18n.ts`, `vi.json`, `en.json` with initial keys)
+- [x] **S1-012** `frontend/src/pages/LoginPage.tsx` — Login form with RHF + Zod + auth mutation
+- [x] **S1-013** `frontend/src/components/shared/Layout/` — Main layout: sidebar + header + outlet
+- [x] **S1-014** `frontend/src/pages/EventsPage.tsx` — Event list with pagination table
+- [x] **S1-016** `frontend/src/components/events/EventFilters/` — Filter panel (week, location, category, status)
+- [x] **S1-015** `frontend/src/components/events/EventForm/` — Create/edit form + draft auto-save (30s)
+- [x] **S1-017** `frontend/src/` — Good/Bad classification badge in EventForm + EventList
 
 ---
 
@@ -80,6 +80,20 @@ _Start after Phase 1 backend is running._
 ## Notes / Blockers
 
 - **Phase 1+2 completed** (session 3). Backend fully scaffolded: 7-model Prisma schema, full CRUD API with OCC, SSE, JWT auth, draft auto-save, audit log, soft delete.
-- **S1-018** (auth service unit tests) deferred after Phase 3 to keep sprint momentum.
+- **Phase 3 completed** (session 4). Frontend scaffolded: Vite + React 18 + TanStack Query + i18n + Zustand + RHF+Zod + Shadcn/ui. All pages and components created.
+- **S1-018** (auth service unit tests) deferred to Sprint 2.
 - **Categories in seed.ts** are placeholders — must be updated from `BS24_ISD_Operations_Template_2026.xlsx` sheet `03_DANH_MUC` before production.
 - **docker-compose DATABASE_URL override**: Dev docker-compose sets `DATABASE_URL=file:/data/isd_oms.db` (absolute path inside container) to override the relative `.env` path.
+- **To run locally (without Docker)**:
+  ```bash
+  # Backend
+  cd backend && npm install
+  cp .env.example .env   # then edit JWT_SECRET
+  npx prisma migrate dev --name init
+  npx prisma db seed
+  npm run dev          # port 3001
+
+  # Frontend (separate terminal)
+  cd frontend && npm install
+  npm run dev          # port 3000 (proxies /api -> 3001)
+  ```

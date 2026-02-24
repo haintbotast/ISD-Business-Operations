@@ -1,0 +1,139 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "create": "Tạo mới",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "reset": "Đặt lại",
+    "loading": "Đang tải...",
+    "error": "Đã có lỗi xảy ra",
+    "noData": "Không có dữ liệu",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "yes": "Có",
+    "no": "Không",
+    "all": "Tất cả",
+    "actions": "Thao tác",
+    "status": "Trạng thái",
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Cập nhật lúc"
+  },
+  "validation": {
+    "required": "Trường này là bắt buộc",
+    "minLength": "Tối thiểu {{min}} ký tự",
+    "maxLength": "Tối đa {{max}} ký tự",
+    "invalidEmail": "Email không hợp lệ",
+    "invalidDate": "Ngày không hợp lệ",
+    "invalidWeekCode": "Mã tuần không hợp lệ (vd: W01)"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginError": "Tên đăng nhập hoặc mật khẩu không đúng",
+    "logoutSuccess": "Đã đăng xuất",
+    "welcome": "Chào mừng",
+    "systemTitle": "ISD Operations Management System"
+  },
+  "nav": {
+    "dashboard": "Tổng quan",
+    "events": "Sự kiện",
+    "reports": "Báo cáo",
+    "import": "Nhập liệu",
+    "admin": "Quản trị"
+  },
+  "event": {
+    "title": "Sự kiện",
+    "createTitle": "Tạo sự kiện mới",
+    "editTitle": "Chỉnh sửa sự kiện",
+    "createSuccess": "Tạo sự kiện thành công",
+    "updateSuccess": "Cập nhật thành công",
+    "deleteSuccess": "Đã xóa sự kiện",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa sự kiện này không?",
+    "conflict": "Sự kiện đã bị thay đổi bởi người dùng khác. Đang tải lại...",
+    "notFound": "Không tìm thấy sự kiện",
+    "draftRestored": "Đã khôi phục bản nháp",
+    "draftSaved": "Đã lưu nháp",
+    "fields": {
+      "year": "Năm",
+      "weekCode": "Tuần",
+      "date": "Ngày",
+      "location": "Địa điểm",
+      "mainGroup": "Nhóm chính",
+      "category": "Danh mục",
+      "systemComponent": "Thành phần hệ thống",
+      "description": "Mô tả",
+      "impact": "Tác động",
+      "rootCause": "Nguyên nhân gốc rễ",
+      "resolution": "Giải pháp",
+      "downtimeMinutes": "Thời gian ngừng (phút)",
+      "classification": "Phân loại",
+      "severity": "Mức độ",
+      "status": "Trạng thái",
+      "createdBy": "Người tạo"
+    },
+    "classification": {
+      "Good": "Tốt",
+      "Bad": "Sự cố"
+    },
+    "severity": {
+      "Critical": "Nghiêm trọng",
+      "High": "Cao",
+      "Medium": "Trung bình",
+      "Low": "Thấp"
+    },
+    "status": {
+      "Open": "Mở",
+      "In Progress": "Đang xử lý",
+      "Resolved": "Đã giải quyết",
+      "Closed": "Đã đóng"
+    },
+    "filters": {
+      "title": "Bộ lọc",
+      "allLocations": "Tất cả địa điểm",
+      "allCategories": "Tất cả danh mục",
+      "allClassifications": "Tất cả phân loại",
+      "allStatuses": "Tất cả trạng thái",
+      "searchPlaceholder": "Tìm kiếm mô tả, thành phần..."
+    }
+  },
+  "pagination": {
+    "showing": "Hiển thị {{from}}-{{to}} / {{total}} bản ghi",
+    "page": "Trang {{page}} / {{total}}",
+    "rowsPerPage": "Bản ghi/trang",
+    "previous": "Trước",
+    "next": "Tiếp"
+  },
+  "dashboard": {
+    "title": "Tổng quan",
+    "totalEvents": "Tổng sự kiện",
+    "incidentRate": "Tỷ lệ sự cố",
+    "avgDowntime": "Thời gian ngừng TB",
+    "resolvedRate": "Tỷ lệ giải quyết",
+    "timeRange": "Khoảng thời gian",
+    "granularity": {
+      "week": "Tuần",
+      "month": "Tháng",
+      "quarter": "Quý",
+      "year": "Năm"
+    }
+  },
+  "admin": {
+    "title": "Quản trị",
+    "categories": "Danh mục",
+    "locations": "Địa điểm",
+    "users": "Người dùng",
+    "roles": {
+      "Admin": "Quản trị viên",
+      "Editor": "Biên tập viên",
+      "Viewer": "Người xem"
+    }
+  }
+}
