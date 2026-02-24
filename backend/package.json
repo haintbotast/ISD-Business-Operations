@@ -15,6 +15,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:seed": "ts-node prisma/seed.ts",
+    "data:seed": "node scripts/seed-bootstrap.cjs",
+    "data:import:excel": "node scripts/import-excel.cjs",
     "prisma:studio": "prisma studio",
     "prisma:reset": "prisma migrate reset --force"
   },

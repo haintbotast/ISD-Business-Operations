@@ -138,7 +138,8 @@
       "month": "Month",
       "quarter": "Quarter",
       "year": "Year"
-    }
+    },
+    "autoAdjustedRange": "No data for current week. Switched to the nearest week with data."
   },
   "admin": {
     "title": "Admin",

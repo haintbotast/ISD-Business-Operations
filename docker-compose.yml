@@ -27,6 +27,7 @@ services:
     volumes:
       - ./backend/src:/app/src       # Hot-reload source changes
       - ./backend/prisma:/app/prisma # Schema + migration files (written back to host)
+      - ./BS24_ISD_Operations_Template_2026.xlsx:/app/BS24_ISD_Operations_Template_2026.xlsx:ro
       - ./data:/data                 # SQLite database (DATABASE_URL=file:/data/isd_oms.db)
       - ./backups:/backups
     env_file:

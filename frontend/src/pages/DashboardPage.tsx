@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import { useUIStore } from '@/store/uiStore';
@@ -9,12 +9,16 @@ import { TrendChart } from '@/components/dashboard/TrendChart';
 import { StatusDistribution } from '@/components/dashboard/StatusDistribution';
 import { DetailTable } from '@/components/dashboard/DetailTable';
 import { Button } from '@/components/ui/button';
-import type { DashboardMetricFilter } from '@/types';
+import api from '@/lib/api';
+import { currentIsoYear, currentWeekCode } from '@/lib/utils';
+import type { DashboardMetricFilter, Event } from '@/types';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { granularity, year, periodStart, periodEnd, setTimeRange } = useUIStore();
   const [metricFilter, setMetricFilter] = useState<DashboardMetricFilter>('all');
+  const [autoAdjustedRange, setAutoAdjustedRange] = useState(false);
+  const hasTriedAutoAdjustRef = useRef(false);
 
   const queryParams = useMemo(
     () => ({
@@ -34,6 +38,47 @@ export default function DashboardPage() {
   const loadingSummary = summaryQuery.isLoading || summaryQuery.isFetching;
   const loadingChart = chartQuery.isLoading || chartQuery.isFetching;
   const hasError = summaryQuery.isError || chartQuery.isError;
+
+  useEffect(() => {
+    if (hasTriedAutoAdjustRef.current) return;
+    if (granularity !== 'week') return;
+
+    const currentYear = currentIsoYear();
+    const currentWeek = currentWeekCode();
+    const isDefaultCurrentWeek = year === currentYear && periodStart === currentWeek && periodEnd === currentWeek;
+    if (!isDefaultCurrentWeek) return;
+
+    if (summaryQuery.isLoading || summaryQuery.isFetching || summaryQuery.isError) return;
+    if ((summary?.kpis.totalEvents.value ?? 0) > 0) return;
+
+    hasTriedAutoAdjustRef.current = true;
+
+    const loadLatestWeek = async () => {
+      try {
+        const res = await api.get<{ success: true; events: Event[] }>('/events', {
+          params: { year, page: 1, limit: 1 },
+        });
+        const latestWeekCode = res.data.events?.[0]?.weekCode;
+        if (!latestWeekCode || latestWeekCode === currentWeek) return;
+        setTimeRange('week', year, latestWeekCode, latestWeekCode);
+        setAutoAdjustedRange(true);
+      } catch {
+        // Keep current selection if fallback query fails
+      }
+    };
+
+    void loadLatestWeek();
+  }, [
+    granularity,
+    periodEnd,
+    periodStart,
+    setTimeRange,
+    summary?.kpis.totalEvents.value,
+    summaryQuery.isError,
+    summaryQuery.isFetching,
+    summaryQuery.isLoading,
+    year,
+  ]);
 
   const kpiCards = [
     {
@@ -97,6 +142,10 @@ export default function DashboardPage() {
         periodEnd={periodEnd}
         onChange={setTimeRange}
       />
+
+      {autoAdjustedRange && (
+        <p className="text-xs text-muted-foreground">{t('dashboard.autoAdjustedRange')}</p>
+      )}
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
         {kpiCards.map((card) => {

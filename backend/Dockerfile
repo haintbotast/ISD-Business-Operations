@@ -10,6 +10,7 @@ RUN npm install
 # Copy source and config
 COPY tsconfig.json ./
 COPY prisma ./prisma/
+COPY scripts ./scripts/
 COPY src ./src/
 
 # Generate Prisma client
@@ -43,6 +44,7 @@ RUN npm install
 
 COPY tsconfig.json ./
 COPY prisma ./prisma/
+COPY scripts ./scripts/
 COPY src ./src/
 
 RUN npx prisma generate

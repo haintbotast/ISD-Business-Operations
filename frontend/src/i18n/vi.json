@@ -138,7 +138,8 @@
       "month": "Tháng",
       "quarter": "Quý",
       "year": "Năm"
-    }
+    },
+    "autoAdjustedRange": "Không có dữ liệu ở tuần hiện tại. Đã chuyển sang tuần gần nhất có dữ liệu."
   },
   "admin": {
     "title": "Quản trị",

@@ -41,6 +41,9 @@ export function TrendChart({ title, xAxis, series, isLoading = false }: TrendCha
             notMerge
             option={{
               animation: true,
+              textStyle: {
+                fontFamily: 'Segoe UI, Noto Sans, Helvetica Neue, Arial, sans-serif',
+              },
               tooltip: { trigger: 'axis', appendToBody: true },
               legend: { type: 'scroll', top: 0 },
               grid: { left: 24, right: 16, bottom: 24, top: 56, containLabel: true },
@@ -61,4 +64,3 @@ export function TrendChart({ title, xAxis, series, isLoading = false }: TrendCha
     </Card>
   );
 }
-

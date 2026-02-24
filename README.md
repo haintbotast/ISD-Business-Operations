@@ -79,6 +79,37 @@ docker-compose up -d
 # viewer / viewer123 (Viewer)
 ```
 
+## Data Seed and Excel Import
+
+Two backend data commands are now separated clearly:
+
+- `seed` (bootstrap): seed week refs, masters, users, and import Excel events when file exists.
+- `import` (excel only): re-import masters/events from Excel without touching users.
+
+### Local (from `backend/`)
+
+```bash
+# Full bootstrap seed
+npm run data:seed
+
+# Excel import only
+npm run data:import:excel
+```
+
+### Docker
+
+```bash
+# Full bootstrap seed
+docker compose exec -T backend npm run data:seed
+
+# Excel import only
+docker compose exec -T backend npm run data:import:excel
+```
+
+Excel file default path:
+- `BS24_ISD_Operations_Template_2026.xlsx` at repo root
+- or override by env var `EXCEL_TEMPLATE_PATH`
+
 ## Sprint Plan
 
 | Sprint | Focus | Duration |

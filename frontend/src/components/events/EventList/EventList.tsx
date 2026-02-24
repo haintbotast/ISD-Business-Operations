@@ -57,7 +57,12 @@ export function EventList() {
 
   const { data, isLoading, error } = useQuery<ApiList<Event>>({
     queryKey: ['events', params],
-    queryFn: () => api.get('/events', { params }).then((r) => r.data),
+    queryFn: () =>
+      api.get('/events', { params }).then((r) => ({
+        success: true as const,
+        data: r.data.events as Event[],
+        pagination: r.data.pagination,
+      })),
     placeholderData: keepPreviousData,
     staleTime: 30_000,
   });
