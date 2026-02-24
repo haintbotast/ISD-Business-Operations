@@ -13,6 +13,12 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',    // Required for Docker — listen on all interfaces
+    // usePolling is required on Docker Desktop (Windows/Mac) where inotify events
+    // are not propagated from the host filesystem to the container.
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
     proxy: {
       // BACKEND_URL allows Docker to override to http://backend:3001
       // Local dev: http://localhost:3001 (default)
