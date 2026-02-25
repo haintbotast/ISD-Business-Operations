@@ -15,7 +15,13 @@ function CellContent({ events }: { events: WeeklyMatrixCell[] }) {
   return (
     <ul className="space-y-1 text-xs">
       {visible.map((e) => (
-        <li key={e.id} className="border-l-2 border-muted pl-1.5">
+        <li
+          key={e.id}
+          className={cn(
+            'border-l-2 pl-1.5',
+            e.classification === 'Good' ? 'border-green-400' : 'border-red-400',
+          )}
+        >
           <span className="font-medium">{e.description}</span>
           <br />
           <span className="text-muted-foreground">
@@ -72,18 +78,9 @@ export function WeeklyMatrix({ data, isLoading }: WeeklyMatrixProps) {
         </thead>
         <tbody>
           {data.categories.map((cat, idx) => {
-            const isBad = cat.classification === 'Bad';
-            const headerCls = isBad
-              ? 'bg-red-50 text-red-800'
-              : 'bg-green-50 text-green-800';
             return (
               <tr key={idx} className="hover:bg-muted/20">
-                <td
-                  className={cn(
-                    'sticky left-0 z-10 border border-border px-3 py-2 font-medium',
-                    headerCls,
-                  )}
-                >
+                <td className="sticky left-0 z-10 border border-border bg-muted/30 px-3 py-2 font-medium">
                   <div className="text-xs text-muted-foreground">{cat.mainGroup}</div>
                   <div>{cat.category}</div>
                 </td>

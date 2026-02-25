@@ -5,6 +5,8 @@ import { useUIStore } from '@/store/uiStore';
 import { useWeeklyMatrix, useKpiTrend } from '@/hooks/useReports';
 import { WeeklyMatrix } from '@/components/reports/WeeklyMatrix';
 import { KpiTrendTable } from '@/components/reports/KpiTrendTable';
+import { RiskMatrix } from '@/components/reports/RiskMatrix';
+import { ParetoChart } from '@/components/reports/ParetoChart';
 import { ExportButton } from '@/components/reports/ExportButton';
 import { TimeRangeSelector } from '@/components/dashboard/TimeRangeSelector';
 import { Button } from '@/components/ui/button';
@@ -38,6 +40,8 @@ export default function ReportsPage() {
         <TabsList>
           <TabsTrigger value="matrix">{t('reports.weeklyMatrix')}</TabsTrigger>
           <TabsTrigger value="kpi">{t('reports.kpiTrend')}</TabsTrigger>
+          <TabsTrigger value="risk">{t('reports.riskMatrix')}</TabsTrigger>
+          <TabsTrigger value="pareto">{t('reports.pareto')}</TabsTrigger>
         </TabsList>
 
         {/* ─── Weekly Matrix Tab ─────────────────────────────────────────────────── */}
@@ -115,6 +119,21 @@ export default function ReportsPage() {
               isLoading={kpiTrendQuery.isLoading || kpiTrendQuery.isFetching}
             />
           )}
+        </TabsContent>
+        {/* ─── Risk Matrix Tab ───────────────────────────────────────────────────── */}
+        <TabsContent value="risk" className="space-y-4">
+          <div>
+            <h2 className="text-base font-semibold">{t('reports.riskMatrixTitle')}</h2>
+          </div>
+          <RiskMatrix />
+        </TabsContent>
+
+        {/* ─── Pareto Tab ────────────────────────────────────────────────────────── */}
+        <TabsContent value="pareto" className="space-y-4">
+          <div>
+            <h2 className="text-base font-semibold">{t('reports.paretoTitle')}</h2>
+          </div>
+          <ParetoChart />
         </TabsContent>
       </Tabs>
     </div>

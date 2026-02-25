@@ -42,7 +42,7 @@ export function TrendChart({ title, xAxis, series, isLoading = false }: TrendCha
             option={{
               animation: true,
               textStyle: {
-                fontFamily: 'Segoe UI, Noto Sans, Helvetica Neue, Arial, sans-serif',
+                fontFamily: '"Noto Sans JP", "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif',
               },
               tooltip: { trigger: 'axis', appendToBody: true },
               legend: { type: 'scroll', top: 0 },

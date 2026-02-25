@@ -84,6 +84,7 @@ export const eventService = {
         resolution: data.resolution,
         downtimeMinutes: data.downtimeMinutes,
         classification: data.classification,
+        impactScope: data.impactScope ?? 'Site',
         severity: data.severity ?? 'Medium',
         status: data.status ?? 'Open',
         createdBy: userId,
@@ -115,6 +116,7 @@ export const eventService = {
         ...(fields.resolution !== undefined && { resolution: fields.resolution }),
         ...(fields.downtimeMinutes !== undefined && { downtimeMinutes: fields.downtimeMinutes }),
         ...(fields.classification !== undefined && { classification: fields.classification }),
+        ...(fields.impactScope !== undefined && { impactScope: fields.impactScope }),
         ...(fields.severity !== undefined && { severity: fields.severity }),
         ...(fields.status !== undefined && { status: fields.status }),
         version: { increment: 1 }, // Increment atomically on success

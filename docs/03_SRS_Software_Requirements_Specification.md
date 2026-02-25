@@ -94,6 +94,8 @@ Hệ thống ISD-OMS thay thế Excel `BS24_ISD_Operations_Template_2026.xlsx` c
 | FR-009 | Auth + RBAC (Admin/Editor/Viewer) + audit log 100% thay đổi dữ liệu nghiệp vụ | Must | BR-007, OBJ-005 | Chặn truy cập trái quyền; mọi thao tác create/update/delete event có bản ghi audit |
 | FR-010 | Quản lý master data tối thiểu: category + location | Must | BR-005, BR-008 | Admin cập nhật danh mục/location; thay đổi phản ánh ở form/filter |
 | FR-011 | **Flexible field management**: Admin định nghĩa custom fields (key, label, type, options, required, sort_order); events lưu custom values dưới dạng JSON trong cột `extra_fields`; field_key immutable sau khi tạo; deactivate thay vì xóa | **Should (v1.1)** | BR-011 | Custom fields hiện trên form/list; validation theo field_type; không mất data khi deactivate — **DEFER sang v1.1 để đảm bảo go-live v1.0** |
+| FR-012 | **Risk Matrix** (JIS Q 31000:2019): Tính Impact × Likelihood per category từ sự kiện Bad; hiển thị bubble chart ECharts với bong bóng = dominantScope; 4 mức rủi ro: Low/Medium/High/Critical theo JIS Z 9103:2018 color. API: `GET /api/v1/reports/risk-matrix?year&weekCode` hoặc `?year&periodStart&periodEnd` | **Must (v1.0 Sprint 5)** | — | Risk Matrix trả đúng riskScore = impact × likelihood; bubble chart hiển thị màu JIS; detail table dưới chart |
+| FR-013 | **Pareto Analysis** (JIS Z 8115): Đếm sự kiện theo category (tất cả: Bad + Good), sort desc, tính cumulative %; Bar+Line combo chart với markLine 80%. API: `GET /api/v1/reports/pareto?year&periodStart&periodEnd` | **Must (v1.0 Sprint 5)** | — | Pareto chart có markLine 80%; tổng cumulative cuối = 100%; top 80% được highlight; Good/Bad bar màu khác nhau |
 
 ### 3.1 Quy tắc nghiệp vụ bắt buộc
 1. `date` phải thuộc `week` đã chọn.
@@ -107,7 +109,7 @@ Hệ thống ISD-OMS thay thế Excel `BS24_ISD_Operations_Template_2026.xlsx` c
 ## 4. YÊU CẦU DỮ LIỆU TỐI THIỂU
 
 ### 4.1 Thực thể cốt lõi (v1.0)
-- `events` (cột `version INTEGER DEFAULT 1` cho OCC; cột `extra_fields TEXT/JSON` được thêm ở v1.1)
+- `events` (cột `version INTEGER DEFAULT 1` cho OCC; cột `impact_scope TEXT DEFAULT 'Site'` cho FR-012; cột `extra_fields TEXT/JSON` được thêm ở v1.1)
 - `users`
 - `category_master`
 - `location_master` (Admin thêm/sửa location; seed: KDAMB, KDAMN, Offshore, HO)

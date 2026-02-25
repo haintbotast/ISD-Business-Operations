@@ -9,6 +9,7 @@ import {
   KpiMetric,
   KpiTrendResponse,
   KpiTrendRow,
+  WeeklyMatrixCell,
   WeeklyMatrixResponse,
 } from '../types';
 
@@ -601,12 +602,13 @@ export const dashboardService = {
           severity: true,
           status: true,
           downtimeMinutes: true,
+          classification: true,
         },
         orderBy: { date: 'asc' },
       }),
     ]);
 
-    const cells: Record<string, Array<{ id: string; description: string; severity: string; status: string; downtimeMinutes: number | null }>> = {};
+    const cells: Record<string, WeeklyMatrixCell[]> = {};
     for (const event of events) {
       const key = `${event.locationCode}|||${event.category}`;
       if (!cells[key]) cells[key] = [];
@@ -616,6 +618,7 @@ export const dashboardService = {
         severity: event.severity,
         status: event.status,
         downtimeMinutes: event.downtimeMinutes,
+        classification: (event.classification === 'Good' ? 'Good' : 'Bad') as 'Good' | 'Bad',
       });
     }
 

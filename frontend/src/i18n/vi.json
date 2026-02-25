@@ -75,13 +75,21 @@
       "resolution": "Giải pháp",
       "downtimeMinutes": "Thời gian ngừng (phút)",
       "classification": "Phân loại",
+      "impactScope": "Phạm vi ảnh hưởng",
       "severity": "Mức độ",
       "status": "Trạng thái",
       "createdBy": "Người tạo"
     },
+    "impactScope": {
+      "Individual": "Cá nhân (個人)",
+      "Team": "Nhóm / Bộ phận (チーム)",
+      "Site": "Chi nhánh (拠点)",
+      "MultiSite": "Liên chi nhánh (複数拠点)",
+      "Enterprise": "Toàn tổ chức (全社)"
+    },
     "classification": {
-      "Good": "Tốt",
-      "Bad": "Sự cố"
+      "Good": "Tin tốt",
+      "Bad": "Tin xấu"
     },
     "severity": {
       "Critical": "Nghiêm trọng",
@@ -161,7 +169,45 @@
     },
     "matrixNoData": "Không có dữ liệu cho tuần này",
     "loadError": "Không thể tải dữ liệu báo cáo",
-    "retry": "Thử lại"
+    "retry": "Thử lại",
+    "riskMatrix": "Ma trận rủi ro",
+    "riskMatrixTitle": "Ma trận rủi ro — JIS Q 31000:2019",
+    "riskMatrixNoData": "Không có dữ liệu rủi ro cho kỳ này",
+    "riskMatrixNote": "Chỉ hiển thị sự kiện Tin xấu (Bad News). Kích thước bong bóng = Phạm vi ảnh hưởng.",
+    "pareto": "Phân tích Pareto",
+    "paretoTitle": "Phân tích Pareto (パレート図) — JIS Z 8115",
+    "paretoNoData": "Không có dữ liệu cho kỳ này",
+    "paretoRule": "Quy tắc 80/20",
+    "periodStart": "Từ tuần",
+    "periodEnd": "Đến tuần",
+    "riskLevel": {
+      "Critical": "Xử lý khẩn (要緊急対応)",
+      "High": "Cần giảm thiểu (要低減措置)",
+      "Medium": "Theo dõi (要監視)",
+      "Low": "Chấp nhận được (許容範囲)"
+    },
+    "likelihood": {
+      "Rare": "Hiếm khi (稀少)",
+      "Unlikely": "Khó xảy ra (低)",
+      "Possible": "Có thể xảy ra (中)",
+      "Likely": "Thường xảy ra (高)"
+    },
+    "riskMatrixCols": {
+      "category": "Danh mục",
+      "eventCount": "Số SK",
+      "impact": "Tác động",
+      "likelihood": "Khả năng",
+      "riskScore": "Điểm rủi ro",
+      "riskLevel": "Mức rủi ro",
+      "dominantScope": "Phạm vi",
+      "maxSeverity": "Mức độ cao nhất"
+    },
+    "paretoCols": {
+      "category": "Danh mục",
+      "count": "Số lượng",
+      "percentage": "Tỷ lệ (%)",
+      "cumulative": "Tích lũy (%)"
+    }
   },
   "admin": {
     "title": "Quản trị",

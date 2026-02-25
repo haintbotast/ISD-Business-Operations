@@ -40,6 +40,7 @@ export interface CreateEventDto {
   resolution?: string;
   downtimeMinutes?: number;
   classification: string; // "Good" | "Bad"
+  impactScope?: string;   // Individual | Team | Site | MultiSite | Enterprise
   severity?: string;
   status?: string;
 }
@@ -145,6 +146,7 @@ export interface WeeklyMatrixCell {
   severity: string;
   status: string;
   downtimeMinutes: number | null;
+  classification: 'Good' | 'Bad';
 }
 
 export interface WeeklyMatrixResponse {
@@ -231,4 +233,47 @@ export interface UpdateUserDto {
   displayName?: string;
   role?: 'Admin' | 'Editor' | 'Viewer';
   isActive?: boolean;
+}
+
+// ─── Impact Scope (影響範囲 / JIS Q 31000) ────────────────────────────────────
+
+export type ImpactScope = 'Individual' | 'Team' | 'Site' | 'MultiSite' | 'Enterprise';
+
+// ─── Risk Matrix (リスクマトリクス / JIS Q 31000) ─────────────────────────────
+
+export interface RiskMatrixItem {
+  category: string;
+  mainGroup: string;
+  eventCount: number;
+  maxSeverity: string;
+  impact: number;          // 1–4 (Low→Critical)
+  impactLabel: string;
+  likelihood: number;      // 1–4 (Rare→Likely)
+  likelihoodLabel: string;
+  riskScore: number;       // impact × likelihood, range 1–16
+  riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
+  dominantScope: ImpactScope;
+  classification: 'Good' | 'Bad';
+}
+
+export interface RiskMatrixResponse {
+  period: string;
+  items: RiskMatrixItem[];
+}
+
+// ─── Pareto Analysis (パレート図 / JIS Z 8115) ────────────────────────────────
+
+export interface ParetoItem {
+  category: string;
+  mainGroup: string;
+  classification: 'Good' | 'Bad';
+  count: number;
+  percentage: number;   // % of total
+  cumulative: number;   // cumulative % (sorted desc)
+}
+
+export interface ParetoResponse {
+  period: string;
+  total: number;
+  items: ParetoItem[];
 }

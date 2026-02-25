@@ -55,7 +55,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Noto Sans JP", "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.75;
   }
 }

@@ -439,6 +439,51 @@ isd-oms/
 
 ---
 
+### 2.5b Sprint 5: Japanese Standards Compliance (25/02/2026)
+
+#### Goals
+Nâng cấp tuân thủ chuẩn Nhật Bản cho hệ thống ISD-OMS theo yêu cầu BELLSYSTEM24:
+- **JIS Q 31000:2019** — Risk Matrix (影響度 × 発生可能性 × 影響範囲)
+- **JIS Z 8115** — Pareto Analysis (パレート図, 80/20 rule)
+- **JIS Z 9103:2018** — Safety colors (Đỏ/Cam/Vàng/Xanh)
+- **帳票 (Chōhyō)** — Japanese formal report format cho PDF export
+- **Noto Sans JP** — Japanese web font (Google Fonts CDN)
+
+#### Completed Tasks
+
+| Task ID | Feature | Status | Notes |
+|---------|---------|--------|-------|
+| SP5-001 | Noto Sans JP font (index.html + index.css) | ✅ Done | Google Fonts CDN preconnect |
+| SP5-002 | JIS Z 9103:2018 color system (colors.ts) | ✅ Done | SEVERITY_COLORS, RISK_LEVEL_COLORS, IMPACT_SCOPE_WEIGHTS |
+| SP5-003 | Schema: `impactScope` field on Event | ✅ Done | Migration: `add_impact_scope`; default='Site' |
+| SP5-004 | Backend types: ImpactScope, RiskMatrixItem, ParetoItem | ✅ Done | backend/src/types/index.ts |
+| SP5-005 | Event routes: impactScope validation | ✅ Done | event.routes.ts createEventSchema |
+| SP5-006 | Event service: impactScope in create/update | ✅ Done | event.service.ts |
+| SP5-007 | reports.service.ts: getRiskMatrix() + getPareto() | ✅ Done | JIS Q 31000 scoring logic |
+| SP5-008 | reports.routes.ts: GET /risk-matrix + /pareto | ✅ Done | Mounted at /api/v1/reports |
+| SP5-009 | app.ts: mount reportsRouter | ✅ Done | |
+| SP5-010 | export.service.ts: 帳票 PDF format + impactScope xlsx | ✅ Done | Noto Sans CJK JP; bilingual header |
+| SP5-011 | import.service.ts: impactScope parsing | ✅ Done | Fallback default='Site' |
+| SP5-012 | Frontend types: ImpactScope, RiskMatrixData, ParetoData | ✅ Done | frontend/src/types/index.ts |
+| SP5-013 | i18n: impactScope.*, riskMatrix.*, pareto.* keys | ✅ Done | vi.json + en.json |
+| SP5-014 | EventForm: impactScope dropdown | ✅ Done | Sau severity, trước status |
+| SP5-015 | useReports.ts: useRiskMatrix() + usePareto() | ✅ Done | /reports/risk-matrix, /reports/pareto |
+| SP5-016 | RiskMatrix component (ECharts scatter bubble) | ✅ Done | 4×4 background, independent period selector |
+| SP5-017 | ParetoChart component (ECharts bar+line) | ✅ Done | markLine 80%, dual Y-axis |
+| SP5-018 | ReportsPage: 2 new tabs (Risk Matrix + Pareto) | ✅ Done | |
+| SP5-019 | TrendChart + KpiCard: Noto Sans JP fontFamily | ✅ Done | ECharts textStyle |
+
+#### Acceptance Criteria - Sprint 5
+
+- [x] GET /api/v1/reports/risk-matrix trả items với riskScore = impact × likelihood, màu JIS Z 9103
+- [x] GET /api/v1/reports/pareto trả items sort desc, cumulative % đúng, tổng = 100%
+- [x] ReportsPage có 4 tabs: Weekly Matrix | KPI Trend | Risk Matrix | Pareto
+- [x] EventForm có dropdown "Phạm vi ảnh hưởng" với 5 options (Individual→Enterprise)
+- [x] PDF export có 帳票 header (週次運用報告書 / Báo Cáo Vận Hành Tuần) + footer
+- [x] Noto Sans JP được load từ Google Fonts CDN
+
+---
+
 ### 2.6 V1.1 Backlog (Defer từ v1.0)
 
 Các tính năng sau đây đã được thiết kế nhưng **KHÔNG** implement trong v1.0 để đảm bảo go-live đúng tiến độ:

@@ -75,13 +75,21 @@
       "resolution": "Resolution",
       "downtimeMinutes": "Downtime (minutes)",
       "classification": "Classification",
+      "impactScope": "Impact Scope",
       "severity": "Severity",
       "status": "Status",
       "createdBy": "Created by"
     },
+    "impactScope": {
+      "Individual": "Individual (個人)",
+      "Team": "Team / Dept (チーム)",
+      "Site": "Site (拠点)",
+      "MultiSite": "Multi-Site (複数拠点)",
+      "Enterprise": "Enterprise-wide (全社)"
+    },
     "classification": {
-      "Good": "Good",
-      "Bad": "Incident"
+      "Good": "Good News",
+      "Bad": "Bad News"
     },
     "severity": {
       "Critical": "Critical",
@@ -161,7 +169,45 @@
     },
     "matrixNoData": "No data for this week",
     "loadError": "Failed to load report data",
-    "retry": "Retry"
+    "retry": "Retry",
+    "riskMatrix": "Risk Matrix",
+    "riskMatrixTitle": "Risk Matrix — JIS Q 31000:2019",
+    "riskMatrixNoData": "No risk data for this period",
+    "riskMatrixNote": "Shows Bad News events only. Bubble size = Impact Scope.",
+    "pareto": "Pareto Analysis",
+    "paretoTitle": "Pareto Analysis (パレート図) — JIS Z 8115",
+    "paretoNoData": "No data for this period",
+    "paretoRule": "80/20 Rule",
+    "periodStart": "From week",
+    "periodEnd": "To week",
+    "riskLevel": {
+      "Critical": "Urgent Action (要緊急対応)",
+      "High": "Risk Reduction (要低減措置)",
+      "Medium": "Monitor (要監視)",
+      "Low": "Acceptable (許容範囲)"
+    },
+    "likelihood": {
+      "Rare": "Rare (稀少)",
+      "Unlikely": "Unlikely (低)",
+      "Possible": "Possible (中)",
+      "Likely": "Likely (高)"
+    },
+    "riskMatrixCols": {
+      "category": "Category",
+      "eventCount": "Events",
+      "impact": "Impact",
+      "likelihood": "Likelihood",
+      "riskScore": "Risk Score",
+      "riskLevel": "Risk Level",
+      "dominantScope": "Scope",
+      "maxSeverity": "Max Severity"
+    },
+    "paretoCols": {
+      "category": "Category",
+      "count": "Count",
+      "percentage": "Percentage (%)",
+      "cumulative": "Cumulative (%)"
+    }
   },
   "admin": {
     "title": "Admin",

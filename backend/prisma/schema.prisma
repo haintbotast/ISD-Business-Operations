@@ -28,6 +28,7 @@ model Event {
   resolution      String?
   downtimeMinutes Int?      @map("downtime_minutes")
   classification  String    // "Good" | "Bad"
+  impactScope     String    @default("Site") @map("impact_scope") // Individual|Team|Site|MultiSite|Enterprise
   severity        String    @default("Medium") // Critical | High | Medium | Low
   status          String    @default("Open")   // Open | In Progress | Resolved | Closed
   version         Int       @default(1)        // OCC — NEVER remove this field

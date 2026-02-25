@@ -27,6 +27,7 @@ const JOURNAL_COL_DEFS: ColDef[] = [
   { field: 'severity',       aliases: ['muc do', 'severity', 'cap do'],         fallback: 13 },
   { field: 'status',         aliases: ['trang thai', 'status'],                 fallback: 14 },
   { field: 'createdBy',      aliases: ['nguoi tao', 'created by', 'tao boi'],   fallback: 15 },
+  { field: 'impactScope',    aliases: ['pham vi', 'impact scope', 'anh huong pham vi'], fallback: 16 },
 ];
 
 function normalize(s: string): string {
@@ -91,6 +92,7 @@ interface ParsedRow {
   resolution: string;
   downtimeMinutes: number | null;
   classification: string;
+  impactScope: string;
   severity: string;
   status: string;
   createdBy: string;
@@ -137,6 +139,16 @@ function parseRows(rows: unknown[][]): ParsedRow[] {
     const rawClassification = cellStr(row, colMap['classification']);
     const classification = rawClassification.toLowerCase().includes('good') ? 'Good' : 'Bad';
 
+    const rawScope = cellStr(row, colMap['impactScope']);
+    const scopeMap: Record<string, string> = {
+      individual: 'Individual', 'ca nhan': 'Individual',
+      team: 'Team', nhom: 'Team', 'bo phan': 'Team',
+      site: 'Site', 'chi nhanh': 'Site', 'ra point': 'Site',
+      multisite: 'MultiSite', 'lien chi nhanh': 'MultiSite', 'nhieu site': 'MultiSite',
+      enterprise: 'Enterprise', 'toan to chuc': 'Enterprise', 'toan cong ty': 'Enterprise',
+    };
+    const impactScope = scopeMap[normalize(rawScope)] ?? 'Site';
+
     const rawSeverity = cellStr(row, colMap['severity']);
     const severityMap: Record<string, string> = {
       critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low',
@@ -168,6 +180,7 @@ function parseRows(rows: unknown[][]): ParsedRow[] {
       resolution: cellStr(row, colMap['resolution']),
       downtimeMinutes,
       classification,
+      impactScope,
       severity,
       status,
       createdBy: cellStr(row, colMap['createdBy']),
@@ -313,6 +326,7 @@ export const importService = {
             resolution: row.resolution || null,
             downtimeMinutes: row.downtimeMinutes,
             classification: row.classification,
+            impactScope: row.impactScope,
             severity: row.severity,
             status: row.status,
             createdBy: row.createdBy || importedBy,

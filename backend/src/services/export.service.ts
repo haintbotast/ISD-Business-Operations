@@ -10,7 +10,7 @@ const EVENTS_HEADERS = [
   'ID', 'Năm', 'Tuần', 'Ngày', 'Địa điểm',
   'Nhóm chính', 'Danh mục', 'Thành phần HT',
   'Mô tả', 'Tác động', 'Nguyên nhân', 'Giải pháp',
-  'Downtime (phút)', 'Phân loại', 'Mức độ', 'Trạng thái',
+  'Downtime (phút)', 'Phân loại', 'Phạm vi ảnh hưởng', 'Mức độ', 'Trạng thái',
   'Người tạo', 'Ngày tạo',
 ];
 
@@ -57,6 +57,7 @@ export const exportService = {
         e.resolution ?? '',
         e.downtimeMinutes ?? '',
         e.classification,
+        e.impactScope ?? 'Site',
         e.severity,
         e.status,
         e.createdBy ?? '',
@@ -98,32 +99,42 @@ export const exportService = {
 
   // ─── Weekly Matrix PDF ─────────────────────────────────────────────────────
 
-  async buildWeeklyMatrixPdf(week: string, year: number): Promise<Buffer> {
+  async buildWeeklyMatrixPdf(week: string, year: number, exportedBy?: string): Promise<Buffer> {
     const matrix = await dashboardService.getWeeklyMatrix(week, year);
 
-    const badStyle = 'background:#fee2e2;color:#991b1b;';
-    const goodStyle = 'background:#dcfce7;color:#166534;';
+    const now = new Date();
+    const exportDateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+    const exportTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const locationList = matrix.locations.join('・');
 
     const locationHeaders = matrix.locations
-      .map((loc) => `<th style="min-width:160px;padding:8px;border:1px solid #ccc">${loc}</th>`)
+      .map((loc) => `<th style="min-width:140px;padding:6px 8px;border:1px solid #b0b8c8">${loc}</th>`)
       .join('');
 
     const bodyRows = matrix.categories
       .map((cat) => {
-        const labelStyle = cat.classification === 'Bad' ? badStyle : goodStyle;
-        const cellStyle = 'padding:6px;border:1px solid #ccc;vertical-align:top;font-size:12px';
-        const catCell = `<td style="${cellStyle};${labelStyle};font-weight:600;white-space:nowrap">${cat.mainGroup}<br/>${cat.category}</td>`;
+        const isBad = cat.classification === 'Bad';
+        const catCellStyle = isBad
+          ? 'background:#fff0f0;border-left:3px solid #C00000'
+          : 'background:#f0fff4;border-left:3px solid #70AD47';
+        const cellStyle = 'padding:5px 7px;border:1px solid #d0d7e2;vertical-align:top;font-size:11px';
+        const catCell = `<td style="${cellStyle};${catCellStyle};font-weight:600;white-space:nowrap;min-width:180px">
+          <span style="font-size:10px;color:#666">${cat.mainGroup}</span><br/>${cat.category}
+        </td>`;
         const locationCells = matrix.locations
           .map((loc) => {
             const key = `${loc}|||${cat.category}`;
             const events = matrix.cells[key] ?? [];
             const items = events
-              .map(
-                (e) =>
-                  `<li style="margin-bottom:4px"><b>${e.severity}</b> ${e.description}<br/><span style="color:#666">${e.status}${e.downtimeMinutes ? ` · ${e.downtimeMinutes}'` : ''}</span></li>`,
-              )
+              .map((e) => {
+                const borderColor = e.classification === 'Bad' ? '#C00000' : '#70AD47';
+                return `<li style="margin-bottom:5px;padding-left:6px;border-left:2px solid ${borderColor};list-style:none">
+                  <b>${e.description}</b><br/>
+                  <span style="color:#666;font-size:10px">${e.severity} / ${e.status}${e.downtimeMinutes ? ` · ${e.downtimeMinutes}'` : ''}</span>
+                </li>`;
+              })
               .join('');
-            return `<td style="${cellStyle}">${events.length ? `<ul style="margin:0;padding-left:16px">${items}</ul>` : ''}</td>`;
+            return `<td style="${cellStyle}">${events.length ? `<ul style="margin:0;padding:0">${items}</ul>` : ''}</td>`;
           })
           .join('');
         return `<tr>${catCell}${locationCells}</tr>`;
@@ -131,30 +142,96 @@ export const exportService = {
       .join('');
 
     const html = `<!DOCTYPE html>
-<html lang="vi">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-  body { margin: 0; padding: 16px; font-size: 13px; }
-  h1 { font-size: 18px; margin-bottom: 4px; }
-  p { margin: 0 0 12px; color: #555; font-size: 12px; }
-  table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-  th { background: #f1f5f9; font-size: 12px; font-weight: 700; }
+  /* 帳票フォント — Noto Sans CJK JP (Alpine apk: font-noto font-noto-cjk) */
+  * {
+    box-sizing: border-box;
+    font-family: 'Noto Sans CJK JP', 'Noto Sans JP', 'NotoSansCJK-Regular', 'Noto Sans', Arial, sans-serif;
+  }
+  html, body { margin: 0; padding: 0; font-size: 12px; color: #1a1a2e; }
+
+  /* ─── 帳票ヘッダー ─────────────────────────────────────── */
+  .report-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 12px 16px 10px; border-bottom: 2px solid #1e3a5f; margin-bottom: 12px;
+  }
+  .report-title h1 {
+    margin: 0; font-size: 18px; font-weight: 700; color: #1e3a5f; letter-spacing: 0.05em;
+  }
+  .report-title h2 {
+    margin: 2px 0 0; font-size: 12px; font-weight: 400; color: #4a5568;
+  }
+  .report-meta { border-collapse: collapse; font-size: 11px; }
+  .report-meta td { padding: 2px 10px; border: 1px solid #c8d4e3; }
+  .report-meta td:first-child { background: #eef2f8; font-weight: 600; white-space: nowrap; }
+
+  /* ─── 本表 ────────────────────────────────────────────── */
+  table.matrix { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  table.matrix th {
+    background: #1e3a5f; color: #fff; font-size: 11px; font-weight: 600;
+    padding: 6px 8px; border: 1px solid #b0b8c8; text-align: center;
+  }
+
+  /* ─── 帳票フッター (位置固定) ─────────────────────────── */
+  .report-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 4px 16px; font-size: 10px; color: #6b7280;
+    border-top: 1px solid #d0d7e2; background: #f8fafc;
+    display: flex; justify-content: space-between;
+  }
+  @media print {
+    .report-footer { position: fixed; bottom: 0; }
+  }
 </style>
 </head>
 <body>
-<h1>Weekly Matrix — ${week}/${year}</h1>
-<p>${matrix.weekRange}</p>
-<table>
+
+<!-- 帳票ヘッダー -->
+<div class="report-header">
+  <div class="report-title">
+    <h1>週次運用報告書</h1>
+    <h2>Báo Cáo Vận Hành Tuần</h2>
+  </div>
+  <table class="report-meta">
+    <tr>
+      <td>対象週 / Tuần báo cáo</td>
+      <td>${week}/${year} &nbsp;(${matrix.weekRange})</td>
+    </tr>
+    <tr>
+      <td>作成日 / Ngày xuất</td>
+      <td>${exportDateStr}</td>
+    </tr>
+    <tr>
+      <td>作成者 / Người xuất</td>
+      <td>${exportedBy ?? 'システム / Hệ thống'}</td>
+    </tr>
+    <tr>
+      <td>対象拠点 / Địa điểm</td>
+      <td>${locationList}</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 本表 -->
+<table class="matrix">
   <thead>
     <tr>
-      <th style="width:200px;padding:8px;border:1px solid #ccc;text-align:left">Danh mục</th>
+      <th style="width:200px;text-align:left">カテゴリ / Danh mục</th>
       ${locationHeaders}
     </tr>
   </thead>
   <tbody>${bodyRows}</tbody>
 </table>
+
+<!-- 帳票フッター -->
+<div class="report-footer">
+  <span>ISD-OMS v1.0 &nbsp;|&nbsp; 出力日時 / Xuất lúc: ${exportDateStr} ${exportTimeStr}</span>
+  <span>対象週 ${week}/${year}</span>
+</div>
+
 </body>
 </html>`;
 

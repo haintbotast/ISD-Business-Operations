@@ -53,6 +53,7 @@ export function KpiCard({ title, value, deltaPct, sparkline, onClick, active = f
             notMerge
             option={{
               animation: true,
+              textStyle: { fontFamily: '"Noto Sans JP", "Segoe UI", sans-serif' },
               grid: { top: 2, right: 0, bottom: 2, left: 0 },
               xAxis: {
                 type: 'category',

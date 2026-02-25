@@ -41,6 +41,7 @@ const eventSchema = z.object({
   resolution: z.string().optional(),
   downtimeMinutes: z.coerce.number().int().min(0).optional(),
   classification: z.enum(['Good', 'Bad']),
+  impactScope: z.enum(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise']).default('Site'),
   severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
   status: z.enum(['Open', 'In Progress', 'Resolved', 'Closed']),
 });
@@ -95,6 +96,7 @@ export function EventForm({ eventId }: EventFormProps) {
       mainGroup: '',
       category: '',
       classification: 'Bad',
+      impactScope: 'Site',
       severity: 'Medium',
       status: 'Open',
     },
@@ -140,6 +142,7 @@ export function EventForm({ eventId }: EventFormProps) {
         resolution: existingEvent.resolution ?? '',
         downtimeMinutes: existingEvent.downtimeMinutes ?? undefined,
         classification: existingEvent.classification as 'Good' | 'Bad',
+        impactScope: (existingEvent.impactScope ?? 'Site') as EventFormValues['impactScope'],
         severity: existingEvent.severity as EventFormValues['severity'],
         status: existingEvent.status as EventFormValues['status'],
       });
@@ -468,6 +471,23 @@ export function EventForm({ eventId }: EventFormProps) {
               <SelectContent>
                 {(['Critical', 'High', 'Medium', 'Low'] as const).map((s) => (
                   <SelectItem key={s} value={s}>{t(`event.severity.${s}`)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>{t('event.fields.impactScope')}</Label>
+            <Select
+              value={form.watch('impactScope')}
+              onValueChange={(v) => form.setValue('impactScope', v as EventFormValues['impactScope'], { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-52">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise'] as const).map((s) => (
+                  <SelectItem key={s} value={s}>{t(`event.impactScope.${s}`)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

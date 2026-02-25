@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
-import type { ApiSuccess, DashboardGranularity, KpiTrendData, WeeklyMatrixData } from '@/types';
+import type { ApiSuccess, DashboardGranularity, KpiTrendData, WeeklyMatrixData, RiskMatrixData, ParetoData } from '@/types';
 
 export function useWeeklyMatrix(week: string, year: number, enabled = true) {
   return useQuery<WeeklyMatrixData>({
@@ -26,5 +26,39 @@ export function useKpiTrend(granularity: DashboardGranularity, year: number) {
       return res.data.data;
     },
     staleTime: 30_000,
+  });
+}
+
+// ─── FR-012: Risk Matrix (JIS Q 31000) ────────────────────────────────────────
+
+export function useRiskMatrix(
+  params: { year: number; weekCode?: string; periodStart?: string; periodEnd?: string },
+  enabled = true,
+) {
+  return useQuery<RiskMatrixData>({
+    queryKey: ['reports', 'risk-matrix', params],
+    queryFn: async () => {
+      const res = await api.get<ApiSuccess<RiskMatrixData>>('/reports/risk-matrix', { params });
+      return res.data.data;
+    },
+    staleTime: 30_000,
+    enabled: enabled && !!params.year,
+  });
+}
+
+// ─── FR-013: Pareto Analysis (JIS Z 8115) ─────────────────────────────────────
+
+export function usePareto(
+  params: { year: number; periodStart?: string; periodEnd?: string },
+  enabled = true,
+) {
+  return useQuery<ParetoData>({
+    queryKey: ['reports', 'pareto', params],
+    queryFn: async () => {
+      const res = await api.get<ApiSuccess<ParetoData>>('/reports/pareto', { params });
+      return res.data.data;
+    },
+    staleTime: 30_000,
+    enabled: enabled && !!params.year,
   });
 }
