@@ -1,0 +1,1 @@
+export { KpiTrendTable } from './KpiTrendTable';

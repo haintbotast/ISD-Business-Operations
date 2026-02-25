@@ -136,3 +136,99 @@ export interface DashboardChartResponse {
     data: number[];
   }>;
 }
+
+// ─── Weekly Matrix ────────────────────────────────────────────────────────────
+
+export interface WeeklyMatrixCell {
+  id: string;
+  description: string;
+  severity: string;
+  status: string;
+  downtimeMinutes: number | null;
+}
+
+export interface WeeklyMatrixResponse {
+  week: string;
+  year: number;
+  weekRange: string;
+  locations: string[];
+  categories: Array<{
+    mainGroup: string;
+    category: string;
+    classification: 'Good' | 'Bad';
+  }>;
+  cells: Record<string, WeeklyMatrixCell[]>;
+}
+
+// ─── KPI Trend ────────────────────────────────────────────────────────────────
+
+export interface KpiTrendRow {
+  period: string;
+  totalEvents: number;
+  downtimeMinutes: number;
+  closureRate: number;
+  severeIncidents: number;
+  openInProgress: number;
+}
+
+export interface KpiTrendResponse {
+  granularity: DashboardGranularity;
+  year: number;
+  currentPeriod: string;
+  columns: string[];
+  rows: KpiTrendRow[];
+}
+
+// ─── Import ───────────────────────────────────────────────────────────────────
+
+export interface ImportPreviewRow {
+  rowNumber: number;
+  weekCode: string;
+  date: string;
+  locationCode: string;
+  mainGroup: string;
+  category: string;
+  description: string;
+  isDuplicate: boolean;
+  parseError?: string;
+}
+
+export interface ImportPreviewResponse {
+  total: number;
+  valid: number;
+  duplicates: number;
+  parseErrors: number;
+  previewRows: ImportPreviewRow[];
+}
+
+export interface ImportExecuteResponse {
+  imported: number;
+  skipped: number;
+  replaced: number;
+  errors: number;
+  errorDetails: Array<{ rowNumber: number; error: string }>;
+}
+
+// ─── User Management ──────────────────────────────────────────────────────────
+
+export interface UserDto {
+  id: string;
+  username: string;
+  displayName: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CreateUserDto {
+  username: string;
+  password: string;
+  displayName: string;
+  role: 'Admin' | 'Editor' | 'Viewer';
+}
+
+export interface UpdateUserDto {
+  displayName?: string;
+  role?: 'Admin' | 'Editor' | 'Viewer';
+  isActive?: boolean;
+}

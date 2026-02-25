@@ -141,15 +141,102 @@
     },
     "autoAdjustedRange": "No data for current week. Switched to the nearest week with data."
   },
+  "reports": {
+    "title": "Reports",
+    "weeklyMatrix": "Weekly Matrix",
+    "kpiTrend": "KPI Trend",
+    "selectWeek": "Select week",
+    "week": "Week",
+    "year": "Year",
+    "exportPdf": "Export PDF",
+    "exportExcel": "Export Excel",
+    "exporting": "Exporting...",
+    "kpiColumns": {
+      "period": "Period",
+      "totalEvents": "Total Events",
+      "downtimeMinutes": "Downtime (mins)",
+      "closureRate": "Closure Rate (%)",
+      "severeIncidents": "Severe Incidents",
+      "openInProgress": "Open/In Progress"
+    },
+    "matrixNoData": "No data for this week",
+    "loadError": "Failed to load report data",
+    "retry": "Retry"
+  },
   "admin": {
     "title": "Admin",
     "categories": "Categories",
     "locations": "Locations",
     "users": "Users",
+    "import": "Import Data",
     "roles": {
       "Admin": "Administrator",
       "Editor": "Editor",
       "Viewer": "Viewer"
+    },
+    "category": {
+      "mainGroup": "Main Group",
+      "category": "Category",
+      "classification": "Classification",
+      "isActive": "Active",
+      "createTitle": "Add Category",
+      "editTitle": "Edit Category",
+      "createSuccess": "Category added",
+      "updateSuccess": "Category updated",
+      "deleteConfirm": "Are you sure you want to deactivate this category?"
+    },
+    "location": {
+      "code": "Code",
+      "fullName": "Full Name",
+      "isActive": "Active",
+      "sortOrder": "Sort Order",
+      "createTitle": "Add Location",
+      "editTitle": "Edit Location",
+      "createSuccess": "Location added",
+      "updateSuccess": "Location updated"
+    },
+    "user": {
+      "username": "Username",
+      "displayName": "Display Name",
+      "role": "Role",
+      "isActive": "Active",
+      "password": "Password",
+      "newPassword": "New Password",
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "resetPasswordTitle": "Reset Password",
+      "createSuccess": "User created",
+      "updateSuccess": "User updated",
+      "resetPasswordSuccess": "Password reset"
+    }
+  },
+  "import": {
+    "title": "Import from Excel",
+    "step1": "Select File",
+    "step2": "Preview",
+    "step3": "Result",
+    "selectFile": "Select Excel file (.xlsx)",
+    "dragDrop": "Drag & drop file here or click to select",
+    "uploading": "Processing...",
+    "previewTitle": "Preview {{total}} rows",
+    "validRows": "Valid: {{count}}",
+    "duplicateRows": "Duplicates: {{count}}",
+    "errorRows": "Errors: {{count}}",
+    "duplicateAction": "Handle duplicates",
+    "skip": "Skip",
+    "replace": "Replace",
+    "executeImport": "Start Import",
+    "importing": "Importing...",
+    "importSuccess": "Import done: {{imported}} rows, replaced: {{replaced}}, errors: {{errors}}",
+    "columns": {
+      "row": "Row",
+      "weekCode": "Week",
+      "date": "Date",
+      "location": "Location",
+      "mainGroup": "Group",
+      "category": "Category",
+      "description": "Description",
+      "status": "Status"
     }
   }
 }

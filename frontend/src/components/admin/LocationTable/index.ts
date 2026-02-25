@@ -1,0 +1,1 @@
+export { LocationTable } from './LocationTable';

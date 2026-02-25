@@ -106,9 +106,58 @@ Source playbook: `docs/05_SPRINT2_DASHBOARD_EXECUTION_PLAYBOOK.md`
 
 #### WS-D Validation/performance/regression
 - [ ] D1. Add backend integration tests for dashboard endpoints (`backend/tests/integration/dashboard.test.ts`).
-- [ ] D2. Verify Sprint 2 AC: KPI cards, stacked chart, status panel, time range sync, drill-down.
+- [x] D2. Verify Sprint 2 AC: KPI cards, stacked chart, status panel, time range sync, drill-down. ← **Verified ✅**
 - [ ] D3. Verify performance target: dashboard update/render < 500ms for expected dataset.
 - [ ] D4. Run regression checks for Sprint 1 core flows (auth + event CRUD + draft + SSE).
+
+---
+
+## Sprint 3 — Reports + Export (COMPLETE ✅)
+
+### WS-E Backend Report APIs
+- [x] E1. Add `getWeeklyMatrix()` to `dashboard.service.ts`.
+- [x] E2. Add `getKpiTrend()` to `dashboard.service.ts`.
+- [x] E3. Add `GET /api/v1/dashboard/weekly-matrix` route.
+- [x] E4. Add `GET /api/v1/dashboard/kpi-trend` route.
+- [x] E5. Create `backend/src/utils/excelHelper.ts` (buildXlsxBuffer, parseXlsxBuffer).
+- [x] E6. Create `backend/src/utils/pdfGenerator.ts` (htmlToPdfBuffer via puppeteer-core).
+- [x] E7. Create `backend/src/services/export.service.ts` (events xlsx + matrix xlsx/pdf).
+- [x] E8. Create `backend/src/routes/export.routes.ts` (GET /export/events, GET /export/weekly-matrix).
+- [x] E9. Mount exportRouter in `backend/src/app.ts`.
+
+### WS-F Frontend Reports UI
+- [x] F1. Add `WeeklyMatrixData`, `KpiTrendData` types to `frontend/src/types/index.ts`.
+- [x] F2. Create `frontend/src/hooks/useReports.ts` (useWeeklyMatrix, useKpiTrend).
+- [x] F3. Create `WeeklyMatrix` component (sticky table, color-coded Bad/Good headers).
+- [x] F4. Create `KpiTrendTable` component (all periods, highlight current, red alert cells).
+- [x] F5. Create `ExportButton` component (DropdownMenu PDF/Excel).
+- [x] F6. Create `frontend/src/components/ui/tabs.tsx` (Shadcn Tabs).
+- [x] F7. Rebuild `frontend/src/pages/ReportsPage.tsx` with Matrix + KpiTrend tabs.
+- [x] F8. Add `reports.*` i18n keys to vi.json + en.json.
+
+---
+
+## Sprint 4 — Import + Admin (COMPLETE ✅)
+
+### WS-G Backend Import + User APIs
+- [x] G1. Create `backend/src/services/import.service.ts` (preview + execute, duplicate detection).
+- [x] G2. Create `backend/src/routes/import.routes.ts` (POST /import/excel with express.raw).
+- [x] G3. Create `backend/src/services/user.service.ts` (list/create/update/resetPassword, bcrypt 12).
+- [x] G4. Create `backend/src/routes/user.routes.ts` (Admin-only CRUD).
+- [x] G5. Mount importRouter + userRouter in `backend/src/app.ts`.
+- [x] G6. Add Sprint 3/4 DTO types to `backend/src/types/index.ts`.
+
+### WS-H Frontend Admin UI
+- [x] H1. Add `ImportPreviewData`, `ImportExecuteData`, `UserDto`, etc. to `frontend/src/types/index.ts`.
+- [x] H2. Create `frontend/src/hooks/useAdmin.ts` (categories/locations/users/import hooks).
+- [x] H3. Create `CategoryTable` component (CRUD via Dialog).
+- [x] H4. Create `LocationTable` component (CRUD via Dialog).
+- [x] H5. Create `UserTable` component (CRUD + reset password).
+- [x] H6. Create `ImportWizard` component (3-step: Upload → Preview → Execute).
+- [x] H7. Create `frontend/src/components/ui/dialog.tsx` (Shadcn Dialog).
+- [x] H8. Create `frontend/src/components/ui/dropdown-menu.tsx` (Shadcn DropdownMenu).
+- [x] H9. Rebuild `frontend/src/pages/AdminPage.tsx` with 4-tab layout.
+- [x] H10. Add `admin.*`, `import.*` i18n keys to vi.json + en.json.
 
 ---
 

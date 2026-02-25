@@ -7,6 +7,9 @@ import {
   DashboardQueryParams,
   DashboardSummaryResponse,
   KpiMetric,
+  KpiTrendResponse,
+  KpiTrendRow,
+  WeeklyMatrixResponse,
 } from '../types';
 
 const OPEN_STATUSES = new Set(['Open', 'In Progress']);
@@ -560,6 +563,114 @@ export const dashboardService = {
     return {
       xAxis: buckets.map((bucket) => bucket.label),
       series,
+    };
+  },
+
+  async getWeeklyMatrix(week: string, year: number): Promise<WeeklyMatrixResponse> {
+    const weekNum = parseWeekCode(week);
+    if (!Number.isInteger(weekNum) || weekNum < 1 || weekNum > 53) {
+      throw new AppError(400, 'INVALID_WEEK', 'Week must be in format W01-W53');
+    }
+    const weekCode = `W${pad2(weekNum)}`;
+
+    const weekRef = await prisma.weekReference.findUnique({
+      where: { year_weekCode: { year, weekCode } },
+    });
+    if (!weekRef) {
+      throw new AppError(400, 'WEEK_NOT_FOUND', `Week ${weekCode} not found for year ${year}`);
+    }
+
+    const [locations, categories, events] = await Promise.all([
+      prisma.locationMaster.findMany({
+        where: { isActive: true },
+        orderBy: [{ sortOrder: 'asc' }, { code: 'asc' }],
+        select: { code: true },
+      }),
+      prisma.categoryMaster.findMany({
+        where: { isActive: true },
+        orderBy: [{ mainGroup: 'asc' }, { sortOrder: 'asc' }, { category: 'asc' }],
+        select: { mainGroup: true, category: true, classification: true },
+      }),
+      prisma.event.findMany({
+        where: { year, weekCode, deletedAt: null },
+        select: {
+          id: true,
+          locationCode: true,
+          category: true,
+          description: true,
+          severity: true,
+          status: true,
+          downtimeMinutes: true,
+        },
+        orderBy: { date: 'asc' },
+      }),
+    ]);
+
+    const cells: Record<string, Array<{ id: string; description: string; severity: string; status: string; downtimeMinutes: number | null }>> = {};
+    for (const event of events) {
+      const key = `${event.locationCode}|||${event.category}`;
+      if (!cells[key]) cells[key] = [];
+      cells[key].push({
+        id: event.id,
+        description: event.description,
+        severity: event.severity,
+        status: event.status,
+        downtimeMinutes: event.downtimeMinutes,
+      });
+    }
+
+    const fmt = (d: Date): string => {
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+      return `${day}/${month}/${d.getUTCFullYear()}`;
+    };
+
+    return {
+      week: weekCode,
+      year,
+      weekRange: `${fmt(weekRef.startDate)} – ${fmt(weekRef.endDate)}`,
+      locations: locations.map((loc: { code: string }) => loc.code),
+      categories: categories.map((cat: { mainGroup: string; category: string; classification: string }) => ({
+        mainGroup: cat.mainGroup,
+        category: cat.category,
+        classification: (cat.classification === 'Good' ? 'Good' : 'Bad') as 'Good' | 'Bad',
+      })),
+      cells,
+    };
+  },
+
+  async getKpiTrend(granularity: DashboardGranularity, year: number): Promise<KpiTrendResponse> {
+    const yearStart = startOfYearUtc(year);
+    const yearEnd = endOfYearUtc(year);
+    const allBuckets = buildBuckets(granularity, yearStart, yearEnd);
+
+    const events = await prisma.event.findMany({
+      where: { date: { gte: yearStart, lte: yearEnd }, deletedAt: null },
+      select: { date: true, downtimeMinutes: true, status: true, severity: true },
+    });
+
+    const byBucket = aggregateBuckets(events, granularity);
+    const now = new Date();
+    const currentPeriod = bucketLabel(now, granularity);
+
+    const rows: KpiTrendRow[] = allBuckets.map((bucket) => {
+      const m = byBucket.get(bucket.key) ?? emptyBucketMetrics();
+      return {
+        period: bucket.label,
+        totalEvents: m.totalEvents,
+        downtimeMinutes: m.downtimeMinutes,
+        closureRate: toPercent(m.closedCount, m.totalEvents),
+        severeIncidents: m.severeCount,
+        openInProgress: m.openInProgress,
+      };
+    });
+
+    return {
+      granularity,
+      year,
+      currentPeriod,
+      columns: ['totalEvents', 'downtimeMinutes', 'closureRate', 'severeIncidents', 'openInProgress'],
+      rows,
     };
   },
 };

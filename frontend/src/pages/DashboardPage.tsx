@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { AlertCircle } from 'lucide-react';
 import { useUIStore } from '@/store/uiStore';
 import { useDashboardChart, useDashboardSummary } from '@/hooks/useDashboard';
@@ -11,10 +12,11 @@ import { DetailTable } from '@/components/dashboard/DetailTable';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
 import { currentIsoYear, currentWeekCode } from '@/lib/utils';
-import type { DashboardMetricFilter, Event } from '@/types';
+import type { ApiList, DashboardMetricFilter, Event } from '@/types';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { granularity, year, periodStart, periodEnd, setTimeRange } = useUIStore();
   const [metricFilter, setMetricFilter] = useState<DashboardMetricFilter>('all');
   const [autoAdjustedRange, setAutoAdjustedRange] = useState(false);
@@ -55,10 +57,21 @@ export default function DashboardPage() {
 
     const loadLatestWeek = async () => {
       try {
-        const res = await api.get<{ success: true; events: Event[] }>('/events', {
-          params: { year, page: 1, limit: 1 },
+        // Use fetchQuery so the result is stored in / served from the TanStack
+        // Query cache with the same key that EventList uses — avoids a
+        // duplicate network request if the list was already fetched.
+        const latestParams = { page: 1, limit: 1, year };
+        const cached = await queryClient.fetchQuery<ApiList<Event>>({
+          queryKey: ['events', latestParams],
+          queryFn: () =>
+            api.get('/events', { params: latestParams }).then((r) => ({
+              success: true as const,
+              data: Array.isArray(r.data.events) ? (r.data.events as Event[]) : [],
+              pagination: r.data.pagination,
+            })),
+          staleTime: 30_000,
         });
-        const latestWeekCode = res.data.events?.[0]?.weekCode;
+        const latestWeekCode = cached.data[0]?.weekCode;
         if (!latestWeekCode || latestWeekCode === currentWeek) return;
         setTimeRange('week', year, latestWeekCode, latestWeekCode);
         setAutoAdjustedRange(true);

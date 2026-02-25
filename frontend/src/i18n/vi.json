@@ -141,15 +141,102 @@
     },
     "autoAdjustedRange": "Không có dữ liệu ở tuần hiện tại. Đã chuyển sang tuần gần nhất có dữ liệu."
   },
+  "reports": {
+    "title": "Báo cáo",
+    "weeklyMatrix": "Ma trận tuần",
+    "kpiTrend": "KPI theo kỳ",
+    "selectWeek": "Chọn tuần",
+    "week": "Tuần",
+    "year": "Năm",
+    "exportPdf": "Xuất PDF",
+    "exportExcel": "Xuất Excel",
+    "exporting": "Đang xuất...",
+    "kpiColumns": {
+      "period": "Kỳ",
+      "totalEvents": "Tổng SK",
+      "downtimeMinutes": "Downtime (phút)",
+      "closureRate": "Tỷ lệ đóng (%)",
+      "severeIncidents": "SK nghiêm trọng",
+      "openInProgress": "Mở/Đang xử lý"
+    },
+    "matrixNoData": "Không có dữ liệu cho tuần này",
+    "loadError": "Không thể tải dữ liệu báo cáo",
+    "retry": "Thử lại"
+  },
   "admin": {
     "title": "Quản trị",
     "categories": "Danh mục",
     "locations": "Địa điểm",
     "users": "Người dùng",
+    "import": "Nhập dữ liệu",
     "roles": {
       "Admin": "Quản trị viên",
       "Editor": "Biên tập viên",
       "Viewer": "Người xem"
+    },
+    "category": {
+      "mainGroup": "Nhóm chính",
+      "category": "Danh mục",
+      "classification": "Phân loại",
+      "isActive": "Đang hoạt động",
+      "createTitle": "Thêm danh mục",
+      "editTitle": "Chỉnh sửa danh mục",
+      "createSuccess": "Đã thêm danh mục",
+      "updateSuccess": "Đã cập nhật danh mục",
+      "deleteConfirm": "Bạn có chắc muốn vô hiệu hóa danh mục này?"
+    },
+    "location": {
+      "code": "Mã",
+      "fullName": "Tên đầy đủ",
+      "isActive": "Đang hoạt động",
+      "sortOrder": "Thứ tự",
+      "createTitle": "Thêm địa điểm",
+      "editTitle": "Chỉnh sửa địa điểm",
+      "createSuccess": "Đã thêm địa điểm",
+      "updateSuccess": "Đã cập nhật địa điểm"
+    },
+    "user": {
+      "username": "Tên đăng nhập",
+      "displayName": "Tên hiển thị",
+      "role": "Vai trò",
+      "isActive": "Đang hoạt động",
+      "password": "Mật khẩu",
+      "newPassword": "Mật khẩu mới",
+      "createTitle": "Tạo người dùng",
+      "editTitle": "Chỉnh sửa người dùng",
+      "resetPasswordTitle": "Đặt lại mật khẩu",
+      "createSuccess": "Đã tạo người dùng",
+      "updateSuccess": "Đã cập nhật người dùng",
+      "resetPasswordSuccess": "Đã đặt lại mật khẩu"
+    }
+  },
+  "import": {
+    "title": "Nhập dữ liệu từ Excel",
+    "step1": "Chọn file",
+    "step2": "Xem trước",
+    "step3": "Kết quả",
+    "selectFile": "Chọn file Excel (.xlsx)",
+    "dragDrop": "Kéo thả file vào đây hoặc click để chọn",
+    "uploading": "Đang xử lý...",
+    "previewTitle": "Xem trước {{total}} dòng",
+    "validRows": "Hợp lệ: {{count}}",
+    "duplicateRows": "Trùng lặp: {{count}}",
+    "errorRows": "Lỗi: {{count}}",
+    "duplicateAction": "Xử lý trùng lặp",
+    "skip": "Bỏ qua",
+    "replace": "Ghi đè",
+    "executeImport": "Bắt đầu nhập",
+    "importing": "Đang nhập...",
+    "importSuccess": "Nhập thành công: {{imported}} dòng, ghi đè: {{replaced}}, lỗi: {{errors}}",
+    "columns": {
+      "row": "Dòng",
+      "weekCode": "Tuần",
+      "date": "Ngày",
+      "location": "Địa điểm",
+      "mainGroup": "Nhóm",
+      "category": "Danh mục",
+      "description": "Mô tả",
+      "status": "Trạng thái"
     }
   }
 }

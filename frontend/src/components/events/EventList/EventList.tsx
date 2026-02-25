@@ -60,7 +60,7 @@ export function EventList() {
     queryFn: () =>
       api.get('/events', { params }).then((r) => ({
         success: true as const,
-        data: r.data.events as Event[],
+        data: Array.isArray(r.data.events) ? (r.data.events as Event[]) : [],
         pagination: r.data.pagination,
       })),
     placeholderData: keepPreviousData,

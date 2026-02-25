@@ -225,6 +225,70 @@ function inferDowntimeMinutes(rawDowntime: unknown, description: string, categor
   return null;
 }
 
+// -------- Excel column discovery --------
+
+/**
+ * Each entry maps a logical field name to its list of normalized header aliases
+ * (diacritics stripped, lowercase) and a hardcoded fallback index for sheets
+ * that have no header row or use an unexpected layout.
+ */
+const JOURNAL_COL_DEFS: Array<{ field: string; aliases: string[]; fallback: number }> = [
+  { field: 'date',            aliases: ['ngay', 'date', 'ngay thang', 'thoi gian'],                    fallback: 1  },
+  { field: 'weekCode',        aliases: ['tuan', 'week', 'so tuan', 'tuan le'],                          fallback: 2  },
+  { field: 'locationCode',    aliases: ['vi tri', 'location', 'dia diem'],                              fallback: 3  },
+  { field: 'mainGroup',       aliases: ['nhom chinh', 'main group', 'nhom'],                            fallback: 4  },
+  { field: 'category',        aliases: ['hang muc', 'category', 'danh muc', 'loai su co'],              fallback: 5  },
+  { field: 'systemComponent', aliases: ['he thong', 'system', 'component', 'thanh phan'],               fallback: 6  },
+  { field: 'severity',        aliases: ['muc do', 'severity', 'cap do'],                                fallback: 8  },
+  { field: 'status',          aliases: ['trang thai', 'status', 'tinh trang'],                          fallback: 9  },
+  { field: 'createdByPri',    aliases: ['nguoi tao', 'created by', 'nguoi thuc hien'],                  fallback: 10 },
+  { field: 'description',     aliases: ['mo ta', 'description', 'noi dung', 'chi tiet su co'],          fallback: 12 },
+  { field: 'impact',          aliases: ['anh huong', 'impact', 'tac dong'],                             fallback: 13 },
+  { field: 'downtimeRaw',     aliases: ['thoi gian down', 'downtime', 'so phut gian doan'],             fallback: 14 },
+  { field: 'rootCause',       aliases: ['nguyen nhan', 'root cause', 'nguyen nhan goc'],                fallback: 15 },
+  { field: 'resolution',      aliases: ['giai phap', 'resolution', 'xu ly', 'bien phap xu ly'],         fallback: 16 },
+  { field: 'createdByAlt',    aliases: ['nguoi cap nhat', 'updated by', 'nhan vien'],                   fallback: 20 },
+  { field: 'classification',  aliases: ['phan loai', 'classification', 'loai good bad', 'good bad'],    fallback: 21 },
+];
+
+/**
+ * Builds a field-name → column-index map by matching normalized header cell
+ * values against known aliases.  Falls back to hardcoded index when a header
+ * is not found so the import still works on headerless / reordered sheets.
+ */
+function buildJournalColMap(headerRow: unknown[]): Record<string, number> {
+  const colMap: Record<string, number> = {};
+  const usedByHeader: string[] = [];
+
+  for (const def of JOURNAL_COL_DEFS) {
+    let found = false;
+    for (let i = 0; i < headerRow.length; i += 1) {
+      const cell = normalizeForMatch(normalizeText(headerRow[i]));
+      if (!cell) continue;
+      const matched = def.aliases.some(
+        (alias) => cell === alias || cell.includes(alias) || (alias.includes(cell) && cell.length > 2),
+      );
+      if (matched) {
+        colMap[def.field] = i;
+        usedByHeader.push(def.field);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      colMap[def.field] = def.fallback;
+    }
+  }
+
+  if (usedByHeader.length > 0) {
+    console.log(`[SEED] Journal header detection: ${usedByHeader.length}/${JOURNAL_COL_DEFS.length} columns matched by name.`);
+  } else {
+    console.log('[SEED] Journal header detection: no headers matched — using fallback column indices.');
+  }
+
+  return colMap;
+}
+
 function resolveExcelPath(): string | null {
   const envPath = process.env.EXCEL_TEMPLATE_PATH?.trim();
 
@@ -264,9 +328,14 @@ function loadExcelSeedData(): ExcelSeedData | null {
   const journalRows = XLSX.utils.sheet_to_json<unknown[]>(journalSheet, { header: 1, defval: '' });
   const masterRows = XLSX.utils.sheet_to_json<unknown[]>(masterSheet, { header: 1, defval: '' });
 
+  // Build column map from header row (row index 5 = Excel row 6).
+  // Falls back to hardcoded indices when headers are not detected.
+  const journalHeaderRow = journalRows[5] ?? [];
+  const colMap = buildJournalColMap(journalHeaderRow);
+
   const locationSet = new Set<string>();
 
-  // Master sheet location list (column B, row 6+)
+  // Master sheet location list (column A, row 6+)
   for (let i = 5; i < masterRows.length; i += 1) {
     const row = masterRows[i] ?? [];
     const code = canonicalLocationCode(normalizeText(row[0]));
@@ -279,25 +348,28 @@ function loadExcelSeedData(): ExcelSeedData | null {
     { mainGroup: string; category: string; good: number; bad: number }
   >();
 
-  // Journal sheet data starts after row 6 header
+  // Journal data rows start after header (row index 6 = Excel row 7)
   for (let i = 6; i < journalRows.length; i += 1) {
     const row = journalRows[i] ?? [];
 
-    const date = toDateOnlyUtc(row[1]); // C: Ngay
-    const weekCode = normalizeWeekCode(normalizeText(row[2])); // D: Tuan
-    const locationCode = canonicalLocationCode(normalizeText(row[3])); // E: Vi tri
-    const mainGroup = normalizeText(row[4]); // F: Nhom chinh
-    const category = normalizeText(row[5]); // G: Hang muc
-    const systemComponent = normalizeText(row[6]) || null; // H
-    const rawSeverity = normalizeText(row[8]); // J
-    const rawStatus = normalizeText(row[9]); // K
-    const createdBy = normalizeText(row[10]) || normalizeText(row[20]) || 'excel-import'; // L or V
-    const description = normalizeText(row[12]) || `${mainGroup} - ${category}`; // N
-    const impact = normalizeText(row[13]) || null; // O
-    const rawDowntime = row[14]; // P
-    const rootCause = normalizeText(row[15]) || null; // Q
-    const resolution = normalizeText(row[16]) || null; // R
-    const rawClassification = normalizeText(row[21]); // W
+    const date = toDateOnlyUtc(row[colMap['date']]);
+    const weekCode = normalizeWeekCode(normalizeText(row[colMap['weekCode']]));
+    const locationCode = canonicalLocationCode(normalizeText(row[colMap['locationCode']]));
+    const mainGroup = normalizeText(row[colMap['mainGroup']]);
+    const category = normalizeText(row[colMap['category']]);
+    const systemComponent = normalizeText(row[colMap['systemComponent']]) || null;
+    const rawSeverity = normalizeText(row[colMap['severity']]);
+    const rawStatus = normalizeText(row[colMap['status']]);
+    const createdBy =
+      normalizeText(row[colMap['createdByPri']]) ||
+      normalizeText(row[colMap['createdByAlt']]) ||
+      'excel-import';
+    const description = normalizeText(row[colMap['description']]) || `${mainGroup} - ${category}`;
+    const impact = normalizeText(row[colMap['impact']]) || null;
+    const rawDowntime = row[colMap['downtimeRaw']];
+    const rootCause = normalizeText(row[colMap['rootCause']]) || null;
+    const resolution = normalizeText(row[colMap['resolution']]) || null;
+    const rawClassification = normalizeText(row[colMap['classification']]);
 
     // Skip blank/invalid rows
     if (!date || !weekCode || !locationCode || !mainGroup || !category) continue;
@@ -454,15 +526,17 @@ async function seedCategories(excelData: ExcelSeedData | null) {
         }))
       : FALLBACK_CATEGORIES;
 
-  await prisma.categoryMaster.deleteMany({});
-  await prisma.categoryMaster.createMany({
-    data: categories.map((cat) => ({
-      mainGroup: cat.mainGroup,
-      category: cat.category,
-      classification: cat.classification,
-      sortOrder: cat.sortOrder,
-      isActive: true,
-    })),
+  await prisma.$transaction(async (tx) => {
+    await tx.categoryMaster.deleteMany({});
+    await tx.categoryMaster.createMany({
+      data: categories.map((cat) => ({
+        mainGroup: cat.mainGroup,
+        category: cat.category,
+        classification: cat.classification,
+        sortOrder: cat.sortOrder,
+        isActive: true,
+      })),
+    });
   });
 
   const source = useExcelCategories && excelData ? `Excel (${excelData.sourcePath})` : 'fallback';
@@ -496,32 +570,40 @@ async function seedEventsFromExcel(excelData: ExcelSeedData | null) {
     return;
   }
 
-  await prisma.event.deleteMany({});
-
   const BATCH_SIZE = 200;
-  for (let i = 0; i < excelData.events.length; i += BATCH_SIZE) {
-    const chunk = excelData.events.slice(i, i + BATCH_SIZE);
-    await prisma.event.createMany({
-      data: chunk.map((event) => ({
-        year: event.year,
-        weekCode: event.weekCode,
-        date: event.date,
-        locationCode: event.locationCode,
-        mainGroup: event.mainGroup,
-        category: event.category,
-        systemComponent: event.systemComponent,
-        description: event.description,
-        impact: event.impact,
-        rootCause: event.rootCause,
-        resolution: event.resolution,
-        downtimeMinutes: event.downtimeMinutes,
-        classification: event.classification,
-        severity: event.severity,
-        status: event.status,
-        createdBy: event.createdBy,
-      })),
-    });
-  }
+
+  // Wrap delete + all inserts in a single transaction so a failed batch
+  // does not leave the table empty (all-or-nothing import).
+  await prisma.$transaction(
+    async (tx) => {
+      await tx.event.deleteMany({});
+
+      for (let i = 0; i < excelData.events.length; i += BATCH_SIZE) {
+        const chunk = excelData.events.slice(i, i + BATCH_SIZE);
+        await tx.event.createMany({
+          data: chunk.map((event) => ({
+            year: event.year,
+            weekCode: event.weekCode,
+            date: event.date,
+            locationCode: event.locationCode,
+            mainGroup: event.mainGroup,
+            category: event.category,
+            systemComponent: event.systemComponent,
+            description: event.description,
+            impact: event.impact,
+            rootCause: event.rootCause,
+            resolution: event.resolution,
+            downtimeMinutes: event.downtimeMinutes,
+            classification: event.classification,
+            severity: event.severity,
+            status: event.status,
+            createdBy: event.createdBy,
+          })),
+        });
+      }
+    },
+    { timeout: 60_000 }, // large imports may take >5 s (Prisma default)
+  );
 
   console.log(`[SEED] Event: imported ${excelData.events.length} rows from Excel`);
 }

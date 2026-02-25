@@ -15,6 +15,16 @@ const querySchema = z.object({
   metricFilter: z.enum(['all', 'open', 'severe', 'downtime', 'closure']).optional().default('all'),
 });
 
+const weeklyMatrixSchema = z.object({
+  week: z.string().regex(/^W\d{2}$/, 'week must match W## format'),
+  year: z.coerce.number().int().min(2020).max(2100),
+});
+
+const kpiTrendSchema = z.object({
+  granularity: z.enum(['week', 'month', 'quarter', 'year']).default('week'),
+  year: z.coerce.number().int().min(2020).max(2100),
+});
+
 router.get(
   '/summary',
   authMiddleware,
@@ -37,6 +47,27 @@ router.get(
       ...query,
       locationCode: query.locationCode?.trim() || undefined,
     });
+    res.json({ success: true, data });
+  }),
+);
+
+
+router.get(
+  '/weekly-matrix',
+  authMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    const query = weeklyMatrixSchema.parse(req.query);
+    const data = await dashboardService.getWeeklyMatrix(query.week, query.year);
+    res.json({ success: true, data });
+  }),
+);
+
+router.get(
+  '/kpi-trend',
+  authMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    const query = kpiTrendSchema.parse(req.query);
+    const data = await dashboardService.getKpiTrend(query.granularity, query.year);
     res.json({ success: true, data });
   }),
 );

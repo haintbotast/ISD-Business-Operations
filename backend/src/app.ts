@@ -10,6 +10,9 @@ import authRouter from './routes/auth.routes';
 import eventRouter from './routes/event.routes';
 import masterRouter from './routes/master.routes';
 import dashboardRouter from './routes/dashboard.routes';
+import exportRouter from './routes/export.routes';
+import importRouter from './routes/import.routes';
+import userRouter from './routes/user.routes';
 
 const app = express();
 
@@ -28,6 +31,8 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+// Raw binary for file uploads (import route reads req.rawBody internally)
+app.use('/api/v1/import', express.raw({ type: '*/*', limit: '50mb' }));
 app.use(cookieParser());
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
@@ -36,6 +41,9 @@ app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventRouter);
 app.use('/api/v1/dashboard', dashboardRouter);
+app.use('/api/v1/export', exportRouter);
+app.use('/api/v1/import', importRouter);
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1', masterRouter); // /categories, /locations
 
 // 404 handler for unknown routes
