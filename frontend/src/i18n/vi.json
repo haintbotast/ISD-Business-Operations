@@ -147,7 +147,27 @@
       "quarter": "Quý",
       "year": "Năm"
     },
-    "autoAdjustedRange": "Không có dữ liệu ở tuần hiện tại. Đã chuyển sang tuần gần nhất có dữ liệu."
+    "autoAdjustedRange": "Không có dữ liệu ở tuần hiện tại. Đã chuyển sang tuần gần nhất có dữ liệu.",
+    "events": "sự cố",
+    "topIssues": {
+      "title": "Vấn đề nổi bật",
+      "subtitle": "Nhóm sự cố xuất hiện nhiều nhất trong kỳ",
+      "viewAll": "Xem chi tiết",
+      "noData": "Không có dữ liệu cho kỳ này",
+      "hint": "Tập trung xử lý các nhóm trên giúp giảm nhanh tổng số sự cố"
+    },
+    "alertPanel": {
+      "title": "Sự cố cần chú ý",
+      "subtitle": "Nghiêm trọng & Cao đang chờ xử lý",
+      "viewReport": "Xem báo cáo",
+      "allGood": "Không có sự cố nghiêm trọng nào đang chờ xử lý",
+      "criticalOpen": "sự cố Nghiêm trọng đang mở",
+      "highOpen": "sự cố Cao đang mở",
+      "actNow": "Cần xử lý ngay lập tức",
+      "reviewSoon": "Cần xem xét và xử lý sớm",
+      "periodSummary": "Trong kỳ này",
+      "closedLabel": "Đã đóng / Tổng cộng"
+    }
   },
   "reports": {
     "title": "Báo cáo",

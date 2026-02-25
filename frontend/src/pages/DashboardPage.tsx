@@ -8,6 +8,8 @@ import { TimeRangeSelector } from '@/components/dashboard/TimeRangeSelector';
 import { KpiCard } from '@/components/dashboard/KpiCard';
 import { TrendChart } from '@/components/dashboard/TrendChart';
 import { StatusDistribution } from '@/components/dashboard/StatusDistribution';
+import { TopIssues } from '@/components/dashboard/TopIssues';
+import { AlertPanel } from '@/components/dashboard/AlertPanel';
 import { DetailTable } from '@/components/dashboard/DetailTable';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
@@ -177,6 +179,7 @@ export default function DashboardPage() {
         })}
       </div>
 
+      {/* Row 2: Trend chart (2/3) + Severity donut (1/3) */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <TrendChart
@@ -188,6 +191,22 @@ export default function DashboardPage() {
         </div>
         <StatusDistribution
           title={t('dashboard.statusDistribution')}
+          distribution={summary?.statusDistribution}
+          isLoading={loadingSummary}
+        />
+      </div>
+
+      {/* Row 3: Top issues (2/3) + Alert panel (1/3) */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <TopIssues
+            year={year}
+            periodStart={periodStart}
+            periodEnd={periodEnd}
+            enabled={granularity === 'week'}
+          />
+        </div>
+        <AlertPanel
           distribution={summary?.statusDistribution}
           isLoading={loadingSummary}
         />

@@ -147,7 +147,27 @@
       "quarter": "Quarter",
       "year": "Year"
     },
-    "autoAdjustedRange": "No data for current week. Switched to the nearest week with data."
+    "autoAdjustedRange": "No data for current week. Switched to the nearest week with data.",
+    "events": "incidents",
+    "topIssues": {
+      "title": "Top Issues",
+      "subtitle": "Most frequent incident groups in this period",
+      "viewAll": "View details",
+      "noData": "No data for this period",
+      "hint": "Resolving these top groups will reduce the majority of incidents"
+    },
+    "alertPanel": {
+      "title": "Needs Attention",
+      "subtitle": "Critical & High severity still open",
+      "viewReport": "View report",
+      "allGood": "No critical incidents pending action",
+      "criticalOpen": "Critical incident(s) open",
+      "highOpen": "High severity incident(s) open",
+      "actNow": "Immediate action required",
+      "reviewSoon": "Review and resolve soon",
+      "periodSummary": "This period",
+      "closedLabel": "Closed / Total"
+    }
   },
   "reports": {
     "title": "Reports",

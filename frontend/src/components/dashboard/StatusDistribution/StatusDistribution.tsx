@@ -1,6 +1,15 @@
+import ReactECharts from 'echarts-for-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DashboardSummaryData } from '@/types';
+
+// JIS Z 9103 colours (same as SEVERITY_COLORS in colors.ts)
+const SEV_COLORS = {
+  Critical: '#C00000',
+  High:     '#FF6600',
+  Medium:   '#FFC000',
+  Low:      '#70AD47',
+};
 
 interface StatusDistributionProps {
   title: string;
@@ -8,15 +17,87 @@ interface StatusDistributionProps {
   isLoading?: boolean;
 }
 
-const rowConfig: Array<{ key: 'low' | 'medium' | 'high' | 'critical'; color: string }> = [
-  { key: 'low', color: '#16a34a' },
-  { key: 'medium', color: '#d97706' },
-  { key: 'high', color: '#ea580c' },
-  { key: 'critical', color: '#dc2626' },
-];
-
 export function StatusDistribution({ title, distribution, isLoading = false }: StatusDistributionProps) {
   const { t } = useTranslation();
+
+  const total = distribution?.all.count ?? 0;
+
+  const chartData = distribution
+    ? [
+        { value: distribution.critical.count, name: t('event.severity.Critical'), itemStyle: { color: SEV_COLORS.Critical } },
+        { value: distribution.high.count,     name: t('event.severity.High'),     itemStyle: { color: SEV_COLORS.High } },
+        { value: distribution.medium.count,   name: t('event.severity.Medium'),   itemStyle: { color: SEV_COLORS.Medium } },
+        { value: distribution.low.count,      name: t('event.severity.Low'),      itemStyle: { color: SEV_COLORS.Low } },
+      ].filter((d) => d.value > 0)
+    : [];
+
+  const option = {
+    textStyle: { fontFamily: '"Noto Sans JP", "Segoe UI", sans-serif' },
+    tooltip: {
+      trigger: 'item',
+      appendToBody: true,
+      formatter: (params: { name: string; value: number; percent: number }) =>
+        `${params.name}: <b>${params.value}</b> (${params.percent.toFixed(1)}%)`,
+    },
+    legend: {
+      orient: 'horizontal',
+      bottom: 0,
+      itemWidth: 10,
+      itemHeight: 10,
+      textStyle: { fontSize: 11 },
+    },
+    graphic: [
+      {
+        type: 'text',
+        left: 'center',
+        top: '38%',
+        style: {
+          text: `${total.toLocaleString('vi-VN')}`,
+          textAlign: 'center',
+          fill: '#1a1a1a',
+          fontSize: 22,
+          fontWeight: 'bold',
+        },
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '51%',
+        style: {
+          text: t('dashboard.events'),
+          textAlign: 'center',
+          fill: '#888',
+          fontSize: 11,
+        },
+      },
+    ],
+    series: [
+      {
+        type: 'pie',
+        radius: ['38%', '65%'],
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        emphasis: {
+          label: { show: true, fontSize: 11, fontWeight: 'bold' },
+          itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.15)' },
+        },
+        labelLine: { show: false },
+        data: chartData,
+      },
+    ],
+  };
+
+  // Open vs closed summary rows (below chart)
+  const rows = distribution
+    ? [
+        { key: 'critical', label: t('event.severity.Critical'), color: SEV_COLORS.Critical, ...distribution.critical },
+        { key: 'high',     label: t('event.severity.High'),     color: SEV_COLORS.High,     ...distribution.high },
+        { key: 'medium',   label: t('event.severity.Medium'),   color: SEV_COLORS.Medium,   ...distribution.medium },
+        { key: 'low',      label: t('event.severity.Low'),      color: SEV_COLORS.Low,       ...distribution.low },
+      ]
+    : [];
 
   return (
     <Card>
@@ -28,48 +109,34 @@ export function StatusDistribution({ title, distribution, isLoading = false }: S
           <div className="h-80 animate-pulse rounded-md bg-muted" />
         ) : (
           <>
-            <div className="space-y-1 rounded-md border p-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{t('common.all')}</span>
-                <span>{distribution.all.count.toLocaleString('vi-VN')}</span>
-              </div>
-              <div className="h-2 rounded bg-muted">
-                <div className="h-2 w-full rounded bg-primary" />
-              </div>
-              <div className="text-xs text-muted-foreground">{distribution.all.pct.toFixed(1)}%</div>
-            </div>
+            {/* Donut chart */}
+            <ReactECharts
+              style={{ height: '200px', width: '100%' }}
+              notMerge
+              option={option}
+            />
 
-            {rowConfig.map((row) => {
-              const data = distribution[row.key];
-              const label = t(`event.severity.${row.key === 'critical' ? 'Critical' : row.key === 'high' ? 'High' : row.key === 'medium' ? 'Medium' : 'Low'}`);
-              return (
-                <div key={row.key} className="space-y-1 rounded-md border p-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{label}</span>
-                    <span>{data.count.toLocaleString('vi-VN')}</span>
-                  </div>
-
-                  <div className="h-2 rounded bg-muted">
-                    <div
-                      className="h-2 rounded"
-                      style={{
-                        width: `${Math.min(100, Math.max(0, data.pct))}%`,
-                        backgroundColor: row.color,
-                      }}
+            {/* Open / Closed breakdown */}
+            <div className="space-y-1.5">
+              {rows.filter((r) => r.count > 0).map((row) => (
+                <div key={row.key} className="flex items-center justify-between rounded-md px-2 py-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-sm shrink-0"
+                      style={{ backgroundColor: row.color }}
                     />
+                    <span className="font-medium">{row.label}</span>
+                    <span className="text-muted-foreground">({row.count})</span>
                   </div>
-
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{data.pct.toFixed(1)}%</span>
-                    <span>{t('dashboard.statusSplit', { open: data.open, closed: data.closed })}</span>
-                  </div>
+                  <span className="text-muted-foreground">
+                    {t('dashboard.statusSplit', { open: row.open, closed: row.closed })}
+                  </span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </>
         )}
       </CardContent>
     </Card>
   );
 }
-
