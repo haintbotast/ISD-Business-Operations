@@ -18,7 +18,7 @@ services:
     # Run migrations + seed on every startup (upserts are idempotent), then start dev server
     command: >
       sh -c "
-        npx prisma migrate dev --name init --skip-seed --skip-generate &&
+        npx prisma migrate deploy &&
         npx prisma db seed &&
         npm run dev
       "

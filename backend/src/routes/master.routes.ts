@@ -10,14 +10,12 @@ const router = Router();
 const createCategorySchema = z.object({
   mainGroup: z.string().min(1),
   category: z.string().min(1),
-  classification: z.enum(['Good', 'Bad', 'Neutral']).optional(),
   sortOrder: z.number().int().min(0).optional(),
 });
 
 const updateCategorySchema = z.object({
   mainGroup: z.string().min(1).optional(),
   category: z.string().min(1).optional(),
-  classification: z.enum(['Good', 'Bad', 'Neutral']).optional(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().min(0).optional(),
 });

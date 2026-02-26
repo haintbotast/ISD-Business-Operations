@@ -110,18 +110,11 @@ export function EventForm({ eventId }: EventFormProps) {
     .filter((c) => c.mainGroup === watchedMainGroup)
     .map((c) => c.category);
 
-  // Auto-set classification from category master when category changes
   const handleCategoryChange = useCallback(
     (category: string) => {
-      const cat = categories.find(
-        (c) => c.mainGroup === watchedMainGroup && c.category === category,
-      );
-      if (cat) {
-        form.setValue('classification', cat.classification as 'Good' | 'Bad' | 'Neutral');
-      }
       form.setValue('category', category);
     },
-    [categories, watchedMainGroup, form],
+    [form],
   );
 
   // ── Populate form from existing event ─────────────────────────────────────

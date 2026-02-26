@@ -26,9 +26,8 @@ const EXCEL_FILE_NAME = 'BS24_ISD_Operations_Template_2026.xlsx';
 const JOURNAL_SHEET = '02_NHAT_KY';
 const MASTER_SHEET = '03_DANH_MUC';
 
-type Classification = 'Good' | 'Bad';
 type LocationSeed = { code: string; fullName: string; sortOrder: number };
-type CategorySeed = { mainGroup: string; category: string; classification: Classification; sortOrder: number };
+type CategorySeed = { mainGroup: string; category: string; sortOrder: number };
 
 type ExcelEventSeed = {
   year: number;
@@ -43,7 +42,7 @@ type ExcelEventSeed = {
   rootCause: string | null;
   resolution: string | null;
   downtimeMinutes: number | null;
-  classification: Classification;
+  classification: 'Good' | 'Bad' | 'Neutral';
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
   createdBy: string | null;
@@ -52,7 +51,7 @@ type ExcelEventSeed = {
 type ExcelSeedData = {
   sourcePath: string;
   locations: string[];
-  categories: Array<{ mainGroup: string; category: string; classification: Classification }>;
+  categories: Array<{ mainGroup: string; category: string }>;
   events: ExcelEventSeed[];
 };
 
@@ -66,25 +65,25 @@ const KNOWN_LOCATIONS: LocationSeed[] = [
 ];
 
 const FALLBACK_CATEGORIES: CategorySeed[] = [
-  { mainGroup: 'Hạ tầng', category: 'Máy chủ / Server', classification: 'Bad', sortOrder: 1 },
-  { mainGroup: 'Hạ tầng', category: 'Lưu trữ / Storage', classification: 'Bad', sortOrder: 2 },
-  { mainGroup: 'Hạ tầng', category: 'Mạng / Network', classification: 'Bad', sortOrder: 3 },
-  { mainGroup: 'Hạ tầng', category: 'UPS / Điện', classification: 'Bad', sortOrder: 4 },
-  { mainGroup: 'Ứng dụng', category: 'Ứng dụng nội bộ', classification: 'Bad', sortOrder: 5 },
-  { mainGroup: 'Ứng dụng', category: 'API / Tích hợp', classification: 'Bad', sortOrder: 6 },
-  { mainGroup: 'Ứng dụng', category: 'Cơ sở dữ liệu', classification: 'Bad', sortOrder: 7 },
-  { mainGroup: 'Ứng dụng', category: 'Email / Collaboration', classification: 'Bad', sortOrder: 8 },
-  { mainGroup: 'Bảo mật', category: 'Tường lửa / Firewall', classification: 'Bad', sortOrder: 9 },
-  { mainGroup: 'Bảo mật', category: 'Antivirus / EDR', classification: 'Bad', sortOrder: 10 },
-  { mainGroup: 'Bảo mật', category: 'VPN / Remote Access', classification: 'Bad', sortOrder: 11 },
-  { mainGroup: 'Bảo mật', category: 'Sự cố bảo mật', classification: 'Bad', sortOrder: 12 },
-  { mainGroup: 'Vận hành', category: 'Bảo trì định kỳ', classification: 'Good', sortOrder: 13 },
-  { mainGroup: 'Vận hành', category: 'Triển khai / Deployment', classification: 'Good', sortOrder: 14 },
-  { mainGroup: 'Vận hành', category: 'Change Request', classification: 'Good', sortOrder: 15 },
-  { mainGroup: 'Vận hành', category: 'Rollback', classification: 'Bad', sortOrder: 16 },
-  { mainGroup: 'Kết nối', category: 'Internet', classification: 'Bad', sortOrder: 17 },
-  { mainGroup: 'Kết nối', category: 'WAN / MPLS', classification: 'Bad', sortOrder: 18 },
-  { mainGroup: 'Kết nối', category: 'Mạng nội bộ LAN', classification: 'Bad', sortOrder: 19 },
+  { mainGroup: 'Hạ tầng', category: 'Máy chủ / Server', sortOrder: 1 },
+  { mainGroup: 'Hạ tầng', category: 'Lưu trữ / Storage', sortOrder: 2 },
+  { mainGroup: 'Hạ tầng', category: 'Mạng / Network', sortOrder: 3 },
+  { mainGroup: 'Hạ tầng', category: 'UPS / Điện', sortOrder: 4 },
+  { mainGroup: 'Ứng dụng', category: 'Ứng dụng nội bộ', sortOrder: 5 },
+  { mainGroup: 'Ứng dụng', category: 'API / Tích hợp', sortOrder: 6 },
+  { mainGroup: 'Ứng dụng', category: 'Cơ sở dữ liệu', sortOrder: 7 },
+  { mainGroup: 'Ứng dụng', category: 'Email / Collaboration', sortOrder: 8 },
+  { mainGroup: 'Bảo mật', category: 'Tường lửa / Firewall', sortOrder: 9 },
+  { mainGroup: 'Bảo mật', category: 'Antivirus / EDR', sortOrder: 10 },
+  { mainGroup: 'Bảo mật', category: 'VPN / Remote Access', sortOrder: 11 },
+  { mainGroup: 'Bảo mật', category: 'Sự cố bảo mật', sortOrder: 12 },
+  { mainGroup: 'Vận hành', category: 'Bảo trì định kỳ', sortOrder: 13 },
+  { mainGroup: 'Vận hành', category: 'Triển khai / Deployment', sortOrder: 14 },
+  { mainGroup: 'Vận hành', category: 'Change Request', sortOrder: 15 },
+  { mainGroup: 'Vận hành', category: 'Rollback', sortOrder: 16 },
+  { mainGroup: 'Kết nối', category: 'Internet', sortOrder: 17 },
+  { mainGroup: 'Kết nối', category: 'WAN / MPLS', sortOrder: 18 },
+  { mainGroup: 'Kết nối', category: 'Mạng nội bộ LAN', sortOrder: 19 },
 ];
 
 function normalizeText(value: unknown): string {
@@ -168,7 +167,7 @@ function parseDowntimeFromDescription(description: string): number | null {
   return null;
 }
 
-function inferClassification(mainGroup: string, category: string): Classification {
+function inferClassification(mainGroup: string, category: string): 'Good' | 'Bad' | 'Neutral' {
   const token = `${normalizeForMatch(mainGroup)} ${normalizeForMatch(category)}`;
 
   if (/(su co|downtime|tac dong|moi de doa|bao mat|truy cap|sao luu|kiem toan|ban va)/.test(token)) {
@@ -181,10 +180,11 @@ function inferClassification(mainGroup: string, category: string): Classificatio
   return 'Bad';
 }
 
-function mapClassification(raw: string, mainGroup: string, category: string): Classification {
+function mapClassification(raw: string, mainGroup: string, category: string): 'Good' | 'Bad' | 'Neutral' {
   const value = normalizeForMatch(raw);
   if (value === 'good') return 'Good';
   if (value === 'bad') return 'Bad';
+  if (value === 'neutral') return 'Neutral';
   return inferClassification(mainGroup, category);
 }
 
@@ -343,10 +343,7 @@ function loadExcelSeedData(): ExcelSeedData | null {
   }
 
   const events: ExcelEventSeed[] = [];
-  const categoryStats = new Map<
-    string,
-    { mainGroup: string; category: string; good: number; bad: number }
-  >();
+  const categoryStats = new Map<string, { mainGroup: string; category: string }>();
 
   // Journal data rows start after header (row index 6 = Excel row 7)
   for (let i = 6; i < journalRows.length; i += 1) {
@@ -403,18 +400,12 @@ function loadExcelSeedData(): ExcelSeedData | null {
     locationSet.add(locationCode);
 
     const key = `${mainGroup}|||${category}`;
-    const current = categoryStats.get(key) ?? { mainGroup, category, good: 0, bad: 0 };
-    if (classification === 'Good') current.good += 1;
-    else current.bad += 1;
-    categoryStats.set(key, current);
+    if (!categoryStats.has(key)) {
+      categoryStats.set(key, { mainGroup, category });
+    }
   }
 
   const categories = Array.from(categoryStats.values())
-    .map((item) => ({
-      mainGroup: item.mainGroup,
-      category: item.category,
-      classification: item.bad >= item.good ? 'Bad' : 'Good' as Classification,
-    }))
     .sort((a, b) => a.mainGroup.localeCompare(b.mainGroup) || a.category.localeCompare(b.category));
 
   console.log(
@@ -521,7 +512,6 @@ async function seedCategories(excelData: ExcelSeedData | null) {
       ? excelCategories.map((cat, index) => ({
           mainGroup: cat.mainGroup,
           category: cat.category,
-          classification: cat.classification,
           sortOrder: index + 1,
         }))
       : FALLBACK_CATEGORIES;
@@ -532,7 +522,6 @@ async function seedCategories(excelData: ExcelSeedData | null) {
       data: categories.map((cat) => ({
         mainGroup: cat.mainGroup,
         category: cat.category,
-        classification: cat.classification,
         sortOrder: cat.sortOrder,
         isActive: true,
       })),

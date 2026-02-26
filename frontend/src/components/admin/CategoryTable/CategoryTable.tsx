@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { Plus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCategories, useCreateCategory, useUpdateCategory } from '@/hooks/useAdmin';
-import { ClassificationBadge } from '@/components/shared/ClassificationBadge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,13 +16,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -37,7 +29,6 @@ import type { CategoryMaster } from '@/types';
 const schema = z.object({
   mainGroup: z.string().min(1),
   category: z.string().min(1),
-  classification: z.enum(['Good', 'Bad', 'Neutral']),
   sortOrder: z.coerce.number().int().min(0).optional(),
 });
 type FormValues = z.infer<typeof schema>;
@@ -54,24 +45,22 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
   const updateMutation = useUpdateCategory();
   const isEdit = !!initial;
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       mainGroup: initial?.mainGroup ?? '',
       category: initial?.category ?? '',
-      classification: (initial?.classification as 'Good' | 'Bad' | 'Neutral') ?? 'Bad',
       sortOrder: initial?.sortOrder ?? 0,
     },
   });
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (data: FormValues) => {
     try {
       if (isEdit && initial) {
         await updateMutation.mutateAsync({
           id: initial.id,
           mainGroup: data.mainGroup,
           category: data.category,
-          classification: data.classification,
           sortOrder: data.sortOrder,
         });
         toast.success(t('admin.category.updateSuccess'));
@@ -85,8 +74,6 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
       toast.error(e.message ?? t('common.error'));
     }
   });
-
-  const classification = watch('classification');
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
@@ -109,22 +96,6 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
             {isEdit && (
               <p className="text-xs text-muted-foreground">{t('admin.category.renameWarning')}</p>
             )}
-          </div>
-          <div className="space-y-1">
-            <Label>{t('admin.category.classification')}</Label>
-            <Select
-              value={classification}
-              onValueChange={(v) => setValue('classification', v as 'Good' | 'Bad' | 'Neutral')}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Bad">{t('event.classification.Bad')}</SelectItem>
-                <SelectItem value="Neutral">{t('event.classification.Neutral')}</SelectItem>
-                <SelectItem value="Good">{t('event.classification.Good')}</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="space-y-1">
             <Label>{t('admin.location.sortOrder')}</Label>
@@ -171,7 +142,6 @@ export function CategoryTable() {
             <TableRow>
               <TableHead>{t('admin.category.mainGroup')}</TableHead>
               <TableHead>{t('admin.category.category')}</TableHead>
-              <TableHead className="w-28">{t('admin.category.classification')}</TableHead>
               <TableHead className="w-20">{t('admin.category.isActive')}</TableHead>
               <TableHead className="w-20">{t('common.actions')}</TableHead>
             </TableRow>
@@ -180,7 +150,7 @@ export function CategoryTable() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 5 }).map((_, j) => (
+                  {Array.from({ length: 4 }).map((_, j) => (
                     <TableCell key={j}>
                       <div className="h-4 animate-pulse rounded bg-muted" />
                     </TableCell>
@@ -191,9 +161,6 @@ export function CategoryTable() {
               <TableRow key={cat.id} className={cat.isActive ? '' : 'opacity-50'}>
                 <TableCell className="text-sm">{cat.mainGroup}</TableCell>
                 <TableCell className="text-sm">{cat.category}</TableCell>
-                <TableCell>
-                  <ClassificationBadge value={cat.classification as 'Good' | 'Bad' | 'Neutral'} />
-                </TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"

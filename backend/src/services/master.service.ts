@@ -14,7 +14,7 @@ export const masterService = {
     });
   },
 
-  async createCategory(data: { mainGroup: string; category: string; classification?: string; sortOrder?: number }) {
+  async createCategory(data: { mainGroup: string; category: string; sortOrder?: number }) {
     const exists = await prisma.categoryMaster.findUnique({
       where: { mainGroup_category: { mainGroup: data.mainGroup, category: data.category } },
     });
@@ -24,7 +24,6 @@ export const masterService = {
       data: {
         mainGroup: data.mainGroup,
         category: data.category,
-        classification: data.classification ?? 'Bad',
         sortOrder: data.sortOrder ?? 0,
       },
     });
@@ -32,7 +31,7 @@ export const masterService = {
 
   async updateCategory(
     id: string,
-    data: { mainGroup?: string; category?: string; classification?: string; isActive?: boolean; sortOrder?: number },
+    data: { mainGroup?: string; category?: string; isActive?: boolean; sortOrder?: number },
   ) {
     const cat = await prisma.categoryMaster.findUnique({ where: { id } });
     if (!cat) throw new AppError(404, 'CATEGORY_NOT_FOUND', 'Category not found');
@@ -57,9 +56,8 @@ export const masterService = {
           data: {
             mainGroup: newMainGroup,
             category:  newCategory,
-            ...(data.classification !== undefined && { classification: data.classification }),
-            ...(data.isActive      !== undefined && { isActive:      data.isActive }),
-            ...(data.sortOrder     !== undefined && { sortOrder:     data.sortOrder }),
+            ...(data.isActive  !== undefined && { isActive:  data.isActive }),
+            ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder }),
           },
         });
         await tx.event.updateMany({

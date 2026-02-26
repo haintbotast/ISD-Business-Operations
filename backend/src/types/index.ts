@@ -157,7 +157,6 @@ export interface WeeklyMatrixResponse {
   categories: Array<{
     mainGroup: string;
     category: string;
-    classification: 'Good' | 'Bad' | 'Neutral';
   }>;
   cells: Record<string, WeeklyMatrixCell[]>;
 }

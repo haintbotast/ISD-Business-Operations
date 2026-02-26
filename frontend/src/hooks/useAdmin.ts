@@ -27,7 +27,7 @@ export function useCategories() {
 export function useCreateCategory() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: { mainGroup: string; category: string; classification?: string; sortOrder?: number }) =>
+    mutationFn: (data: { mainGroup: string; category: string; sortOrder?: number }) =>
       api.post<ApiSuccess<CategoryMaster>>('/categories', data).then((r) => r.data.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });
@@ -36,7 +36,7 @@ export function useCreateCategory() {
 export function useUpdateCategory() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string; mainGroup?: string; category?: string; classification?: string; isActive?: boolean; sortOrder?: number }) =>
+    mutationFn: ({ id, ...data }: { id: string; mainGroup?: string; category?: string; isActive?: boolean; sortOrder?: number }) =>
       api.put<ApiSuccess<CategoryMaster>>(`/categories/${id}`, data).then((r) => r.data.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });

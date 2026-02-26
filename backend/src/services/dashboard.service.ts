@@ -506,31 +506,18 @@ export const dashboardService = {
     const bucketIndex = new Map<string, number>();
     buckets.forEach((bucket, index) => bucketIndex.set(bucket.key, index));
 
-    const [events, categories] = await Promise.all([
-      prisma.event.findMany({
-        where: {
-          deletedAt: null,
-          date: { gte: start, lte: end },
-          ...(query.locationCode ? { locationCode: query.locationCode } : {}),
-        },
-        select: {
-          date: true,
-          category: true,
-          classification: true,
-        },
-      }),
-      prisma.categoryMaster.findMany({
-        select: {
-          category: true,
-          classification: true,
-        },
-      }),
-    ]);
-
-    const categoryClassMap = new Map<string, 'Good' | 'Bad' | 'Neutral'>();
-    for (const category of categories) {
-      categoryClassMap.set(category.category, category.classification as 'Good' | 'Bad' | 'Neutral');
-    }
+    const events = await prisma.event.findMany({
+      where: {
+        deletedAt: null,
+        date: { gte: start, lte: end },
+        ...(query.locationCode ? { locationCode: query.locationCode } : {}),
+      },
+      select: {
+        date: true,
+        category: true,
+        classification: true,
+      },
+    });
 
     const grouped = new Map<string, { classification: 'Good' | 'Bad' | 'Neutral'; data: number[] }>();
     for (const event of events) {
@@ -544,7 +531,7 @@ export const dashboardService = {
         continue;
       }
 
-      const classification = categoryClassMap.get(event.category) ?? (event.classification as 'Good' | 'Bad' | 'Neutral');
+      const classification = event.classification as 'Good' | 'Bad' | 'Neutral';
       const data = Array.from({ length: buckets.length }, () => 0);
       data[idx] = 1;
       grouped.set(event.category, { classification, data });
@@ -595,7 +582,7 @@ export const dashboardService = {
       prisma.categoryMaster.findMany({
         where: { isActive: true },
         orderBy: [{ mainGroup: 'asc' }, { sortOrder: 'asc' }, { category: 'asc' }],
-        select: { mainGroup: true, category: true, classification: true },
+        select: { mainGroup: true, category: true },
       }),
       prisma.event.findMany({
         where: { year, weekCode, deletedAt: null },
@@ -638,10 +625,9 @@ export const dashboardService = {
       year,
       weekRange: `${fmt(weekRef.startDate)} – ${fmt(weekRef.endDate)}`,
       locations: locations.map((loc: { code: string }) => loc.code),
-      categories: categories.map((cat: { mainGroup: string; category: string; classification: string }) => ({
+      categories: categories.map((cat: { mainGroup: string; category: string }) => ({
         mainGroup: cat.mainGroup,
         category: cat.category,
-        classification: cat.classification as 'Good' | 'Bad' | 'Neutral',
       })),
       cells,
     };

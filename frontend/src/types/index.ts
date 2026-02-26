@@ -82,7 +82,6 @@ export interface CategoryMaster {
   id: string;
   mainGroup: string;
   category: string;
-  classification: 'Good' | 'Bad' | 'Neutral';
   isActive: boolean;
   sortOrder: number;
 }
@@ -239,7 +238,6 @@ export interface WeeklyMatrixData {
   categories: Array<{
     mainGroup: string;
     category: string;
-    classification: 'Good' | 'Bad' | 'Neutral';
   }>;
   cells: Record<string, WeeklyMatrixCell[]>;
 }
