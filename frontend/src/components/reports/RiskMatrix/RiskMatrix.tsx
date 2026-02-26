@@ -108,14 +108,21 @@ function RiskDetailTable({ items }: { items: RiskMatrixItem[] }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function RiskMatrix() {
+interface RiskMatrixProps {
+  /** Pre-populate period when embedded in Dashboard tab */
+  initialYear?: number;
+  initialPeriodStart?: string;
+  initialPeriodEnd?: string;
+}
+
+export function RiskMatrix({ initialYear, initialPeriodStart, initialPeriodEnd }: RiskMatrixProps = {}) {
   const { t } = useTranslation();
   const curYear = currentIsoYear();
   const curWeek = currentWeekCode();
 
-  const [year, setYear] = useState(curYear);
-  const [periodStart, setPeriodStart] = useState(curWeek);
-  const [periodEnd, setPeriodEnd] = useState(curWeek);
+  const [year, setYear]               = useState(initialYear        ?? curYear);
+  const [periodStart, setPeriodStart] = useState(initialPeriodStart ?? curWeek);
+  const [periodEnd, setPeriodEnd]     = useState(initialPeriodEnd   ?? curWeek);
 
   const { data, isLoading } = useRiskMatrix({ year, periodStart, periodEnd });
 

@@ -149,6 +149,12 @@
     },
     "autoAdjustedRange": "No data for current week. Switched to the nearest week with data.",
     "events": "incidents",
+    "tab": {
+      "overview": "Overview",
+      "analysis": "Analysis",
+      "riskTitle": "Risk Level Analysis",
+      "paretoTitle": "Top Issues by Group"
+    },
     "topIssues": {
       "title": "Top Issues",
       "subtitle": "Most frequent incident groups in this period",
@@ -199,6 +205,13 @@
     "paretoTitle": "Pareto Analysis (パレート図) — JIS Z 8115",
     "paretoNoData": "No data for this period",
     "paretoRule": "80/20 Rule",
+    "paretoInsightGroups": "top incident groups",
+    "paretoInsightMain": "account for {{pct}}% of all {{total}} incidents ({{period}}). Resolving the highlighted ▲ groups will address the majority of issues without handling each incident individually.",
+    "paretoInsightRemainder": "The remaining {{count}} groups account for only {{pct}}% — lower impact.",
+    "paretoPriorityZone": "Priority — top {{count}} groups, {{pct}}% of total incidents",
+    "paretoRemainderZone": "Remaining groups — {{count}} groups, {{pct}}% of total",
+    "paretoPriorityTag": "Priority",
+    "paretoRemainderTag": "Lower impact",
     "periodStart": "From week",
     "periodEnd": "To week",
     "riskLevel": {

@@ -11,7 +11,10 @@ import { StatusDistribution } from '@/components/dashboard/StatusDistribution';
 import { TopIssues } from '@/components/dashboard/TopIssues';
 import { AlertPanel } from '@/components/dashboard/AlertPanel';
 import { DetailTable } from '@/components/dashboard/DetailTable';
+import { RiskMatrix } from '@/components/reports/RiskMatrix';
+import { ParetoChart } from '@/components/reports/ParetoChart';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import api from '@/lib/api';
 import { currentIsoYear, currentWeekCode } from '@/lib/utils';
 import type { ApiList, DashboardMetricFilter, Event } from '@/types';
@@ -59,9 +62,6 @@ export default function DashboardPage() {
 
     const loadLatestWeek = async () => {
       try {
-        // Use fetchQuery so the result is stored in / served from the TanStack
-        // Query cache with the same key that EventList uses — avoids a
-        // duplicate network request if the list was already fetched.
         const latestParams = { page: 1, limit: 1, year };
         const cached = await queryClient.fetchQuery<ApiList<Event>>({
           queryKey: ['events', latestParams],
@@ -162,61 +162,94 @@ export default function DashboardPage() {
         <p className="text-xs text-muted-foreground">{t('dashboard.autoAdjustedRange')}</p>
       )}
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
-        {kpiCards.map((card) => {
-          const metric = summary?.kpis[card.key];
-          return (
-            <KpiCard
-              key={card.key}
-              title={card.title}
-              value={metric?.value ?? 0}
-              deltaPct={metric?.deltaPct ?? 0}
-              sparkline={metric?.sparkline ?? Array.from({ length: 12 }, () => 0)}
-              onClick={() => setMetricFilter(card.filter)}
-              active={metricFilter === card.filter}
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">{t('dashboard.tab.overview')}</TabsTrigger>
+          <TabsTrigger value="analysis">{t('dashboard.tab.analysis')}</TabsTrigger>
+        </TabsList>
+
+        {/* ── Tab 1: Operational overview ── */}
+        <TabsContent value="overview" className="space-y-4 pt-2">
+
+          {/* KPI cards */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {kpiCards.map((card) => {
+              const metric = summary?.kpis[card.key];
+              return (
+                <KpiCard
+                  key={card.key}
+                  title={card.title}
+                  value={metric?.value ?? 0}
+                  deltaPct={metric?.deltaPct ?? 0}
+                  sparkline={metric?.sparkline ?? Array.from({ length: 12 }, () => 0)}
+                  onClick={() => setMetricFilter(card.filter)}
+                  active={metricFilter === card.filter}
+                />
+              );
+            })}
+          </div>
+
+          {/* Row 2: Trend chart (2/3) + Severity donut (1/3) */}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="xl:col-span-2">
+              <TrendChart
+                title={t('dashboard.trendChart')}
+                xAxis={chart?.xAxis ?? []}
+                series={chart?.series ?? []}
+                isLoading={loadingChart}
+              />
+            </div>
+            <StatusDistribution
+              title={t('dashboard.statusDistribution')}
+              distribution={summary?.statusDistribution}
+              isLoading={loadingSummary}
             />
-          );
-        })}
-      </div>
+          </div>
 
-      {/* Row 2: Trend chart (2/3) + Severity donut (1/3) */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <TrendChart
-            title={t('dashboard.trendChart')}
-            xAxis={chart?.xAxis ?? []}
-            series={chart?.series ?? []}
-            isLoading={loadingChart}
+          {/* Row 3: Top issues (2/3) + Alert panel (1/3) */}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="xl:col-span-2">
+              <TopIssues
+                year={year}
+                periodStart={periodStart}
+                periodEnd={periodEnd}
+                enabled={granularity === 'week'}
+              />
+            </div>
+            <AlertPanel
+              distribution={summary?.statusDistribution}
+              isLoading={loadingSummary}
+            />
+          </div>
+
+          <DetailTable
+            title={t('dashboard.detailTable')}
+            rows={summary?.detailRows}
+            isLoading={loadingSummary}
           />
-        </div>
-        <StatusDistribution
-          title={t('dashboard.statusDistribution')}
-          distribution={summary?.statusDistribution}
-          isLoading={loadingSummary}
-        />
-      </div>
+        </TabsContent>
 
-      {/* Row 3: Top issues (2/3) + Alert panel (1/3) */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <TopIssues
-            year={year}
-            periodStart={periodStart}
-            periodEnd={periodEnd}
-            enabled={granularity === 'week'}
-          />
-        </div>
-        <AlertPanel
-          distribution={summary?.statusDistribution}
-          isLoading={loadingSummary}
-        />
-      </div>
+        {/* ── Tab 2: Analysis (Risk Matrix + Pareto) ── */}
+        <TabsContent value="analysis" className="space-y-8 pt-2">
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold">{t('dashboard.tab.riskTitle')}</h2>
+            <RiskMatrix
+              initialYear={year}
+              initialPeriodStart={periodStart}
+              initialPeriodEnd={periodEnd}
+            />
+          </div>
 
-      <DetailTable
-        title={t('dashboard.detailTable')}
-        rows={summary?.detailRows}
-        isLoading={loadingSummary}
-      />
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold">{t('dashboard.tab.paretoTitle')}</h2>
+            <ParetoChart
+              initialYear={year}
+              initialPeriodStart={granularity === 'week' ? 'W01' : periodStart}
+              initialPeriodEnd={periodEnd}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
