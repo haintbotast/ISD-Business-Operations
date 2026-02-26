@@ -37,7 +37,7 @@ import type { CategoryMaster } from '@/types';
 const schema = z.object({
   mainGroup: z.string().min(1),
   category: z.string().min(1),
-  classification: z.enum(['Good', 'Bad']),
+  classification: z.enum(['Good', 'Bad', 'Neutral']),
   sortOrder: z.coerce.number().int().min(0).optional(),
 });
 type FormValues = z.infer<typeof schema>;
@@ -59,7 +59,7 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
     defaultValues: {
       mainGroup: initial?.mainGroup ?? '',
       category: initial?.category ?? '',
-      classification: (initial?.classification as 'Good' | 'Bad') ?? 'Bad',
+      classification: (initial?.classification as 'Good' | 'Bad' | 'Neutral') ?? 'Bad',
       sortOrder: initial?.sortOrder ?? 0,
     },
   });
@@ -109,14 +109,15 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
             <Label>{t('admin.category.classification')}</Label>
             <Select
               value={classification}
-              onValueChange={(v) => setValue('classification', v as 'Good' | 'Bad')}
+              onValueChange={(v) => setValue('classification', v as 'Good' | 'Bad' | 'Neutral')}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Good">{t('event.classification.Good')}</SelectItem>
                 <SelectItem value="Bad">{t('event.classification.Bad')}</SelectItem>
+                <SelectItem value="Neutral">{t('event.classification.Neutral')}</SelectItem>
+                <SelectItem value="Good">{t('event.classification.Good')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

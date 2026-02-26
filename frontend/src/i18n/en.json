@@ -89,7 +89,8 @@
     },
     "classification": {
       "Good": "Good News",
-      "Bad": "Bad News"
+      "Bad": "Bad News",
+      "Neutral": "Neutral"
     },
     "severity": {
       "Critical": "Critical",

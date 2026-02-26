@@ -527,12 +527,12 @@ export const dashboardService = {
       }),
     ]);
 
-    const categoryClassMap = new Map<string, 'Good' | 'Bad'>();
+    const categoryClassMap = new Map<string, 'Good' | 'Bad' | 'Neutral'>();
     for (const category of categories) {
-      categoryClassMap.set(category.category, category.classification === 'Good' ? 'Good' : 'Bad');
+      categoryClassMap.set(category.category, category.classification as 'Good' | 'Bad' | 'Neutral');
     }
 
-    const grouped = new Map<string, { classification: 'Good' | 'Bad'; data: number[] }>();
+    const grouped = new Map<string, { classification: 'Good' | 'Bad' | 'Neutral'; data: number[] }>();
     for (const event of events) {
       const key = bucketKey(event.date, query.granularity);
       const idx = bucketIndex.get(key);
@@ -544,7 +544,7 @@ export const dashboardService = {
         continue;
       }
 
-      const classification = categoryClassMap.get(event.category) ?? (event.classification === 'Good' ? 'Good' : 'Bad');
+      const classification = categoryClassMap.get(event.category) ?? (event.classification as 'Good' | 'Bad' | 'Neutral');
       const data = Array.from({ length: buckets.length }, () => 0);
       data[idx] = 1;
       grouped.set(event.category, { classification, data });
@@ -557,7 +557,12 @@ export const dashboardService = {
         data: value.data,
       }))
       .sort((a, b) => {
-        if (a.classification !== b.classification) return a.classification === 'Bad' ? -1 : 1;
+        if (a.classification !== b.classification) {
+          if (a.classification === 'Bad') return -1;
+          if (b.classification === 'Bad') return 1;
+          if (a.classification === 'Neutral') return -1;
+          return 1;
+        }
         return a.name.localeCompare(b.name);
       });
 
@@ -618,7 +623,7 @@ export const dashboardService = {
         severity: event.severity,
         status: event.status,
         downtimeMinutes: event.downtimeMinutes,
-        classification: (event.classification === 'Good' ? 'Good' : 'Bad') as 'Good' | 'Bad',
+        classification: event.classification as 'Good' | 'Bad' | 'Neutral',
       });
     }
 
@@ -636,7 +641,7 @@ export const dashboardService = {
       categories: categories.map((cat: { mainGroup: string; category: string; classification: string }) => ({
         mainGroup: cat.mainGroup,
         category: cat.category,
-        classification: (cat.classification === 'Good' ? 'Good' : 'Bad') as 'Good' | 'Bad',
+        classification: cat.classification as 'Good' | 'Bad' | 'Neutral',
       })),
       cells,
     };

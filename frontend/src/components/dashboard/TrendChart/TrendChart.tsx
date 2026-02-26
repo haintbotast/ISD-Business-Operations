@@ -9,11 +9,12 @@ interface TrendChartProps {
   isLoading?: boolean;
 }
 
-const BAD_COLORS = ['#C00000', '#FF6666', '#FF9999', '#FFCCCC'];
-const GOOD_COLORS = ['#375623', '#70AD47', '#AADEAA', '#E2F0D9'];
+const BAD_COLORS     = ['#C00000', '#FF6666', '#FF9999', '#FFCCCC'];
+const GOOD_COLORS    = ['#375623', '#70AD47', '#AADEAA', '#E2F0D9'];
+const NEUTRAL_COLORS = ['#2F5496', '#4472C4', '#9DC3E6', '#DEEAF1'];
 
-function seriesColor(classification: 'Good' | 'Bad', index: number): string {
-  const palette = classification === 'Bad' ? BAD_COLORS : GOOD_COLORS;
+function seriesColor(classification: 'Good' | 'Bad' | 'Neutral', index: number): string {
+  const palette = classification === 'Bad' ? BAD_COLORS : classification === 'Neutral' ? NEUTRAL_COLORS : GOOD_COLORS;
   return palette[index % palette.length];
 }
 

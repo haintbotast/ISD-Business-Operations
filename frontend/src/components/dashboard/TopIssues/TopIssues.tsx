@@ -102,6 +102,8 @@ export function TopIssues({ year, periodStart, periodEnd, enabled = true }: TopI
                           'rounded px-1.5 py-0.5 text-xs font-medium',
                           item.classification === 'Bad'
                             ? 'bg-red-50 text-red-700'
+                            : item.classification === 'Neutral'
+                            ? 'bg-blue-50 text-blue-700'
                             : 'bg-green-50 text-green-700',
                         )}
                       >

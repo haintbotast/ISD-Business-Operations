@@ -234,6 +234,7 @@ export default function DashboardPage() {
           <div className="space-y-3">
             <h2 className="text-base font-semibold">{t('dashboard.tab.riskTitle')}</h2>
             <RiskMatrix
+              key={`risk-${year}-${periodStart}-${periodEnd}`}
               initialYear={year}
               initialPeriodStart={periodStart}
               initialPeriodEnd={periodEnd}
@@ -243,6 +244,7 @@ export default function DashboardPage() {
           <div className="space-y-3">
             <h2 className="text-base font-semibold">{t('dashboard.tab.paretoTitle')}</h2>
             <ParetoChart
+              key={`pareto-${year}-${granularity}-${periodStart}-${periodEnd}`}
               initialYear={year}
               initialPeriodStart={granularity === 'week' ? 'W01' : periodStart}
               initialPeriodEnd={periodEnd}

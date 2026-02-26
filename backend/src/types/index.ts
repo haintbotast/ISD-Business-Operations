@@ -133,7 +133,7 @@ export interface DashboardChartResponse {
   xAxis: string[];
   series: Array<{
     name: string;
-    classification: 'Good' | 'Bad';
+    classification: 'Good' | 'Bad' | 'Neutral';
     data: number[];
   }>;
 }
@@ -146,7 +146,7 @@ export interface WeeklyMatrixCell {
   severity: string;
   status: string;
   downtimeMinutes: number | null;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
 }
 
 export interface WeeklyMatrixResponse {
@@ -157,7 +157,7 @@ export interface WeeklyMatrixResponse {
   categories: Array<{
     mainGroup: string;
     category: string;
-    classification: 'Good' | 'Bad';
+    classification: 'Good' | 'Bad' | 'Neutral';
   }>;
   cells: Record<string, WeeklyMatrixCell[]>;
 }
@@ -253,7 +253,7 @@ export interface RiskMatrixItem {
   riskScore: number;       // impact × likelihood, range 1–16
   riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
   dominantScope: ImpactScope;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
 }
 
 export interface RiskMatrixResponse {
@@ -266,7 +266,7 @@ export interface RiskMatrixResponse {
 export interface ParetoItem {
   category: string;
   mainGroup: string;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   count: number;
   percentage: number;   // % of total
   cumulative: number;   // cumulative % (sorted desc)

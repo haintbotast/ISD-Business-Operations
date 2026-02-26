@@ -199,7 +199,7 @@ export const reportsService = {
     }
     const totalWeeksInYear = yearWeekSet.size;
 
-    type Group = { mainGroup: string; classification: 'Good' | 'Bad'; count: number };
+    type Group = { mainGroup: string; classification: 'Good' | 'Bad' | 'Neutral'; count: number };
     const groups = new Map<string, Group>();
     for (const event of events) {
       const existing = groups.get(event.category);
@@ -208,7 +208,7 @@ export const reportsService = {
       } else {
         groups.set(event.category, {
           mainGroup: event.mainGroup,
-          classification: event.classification === 'Good' ? 'Good' : 'Bad',
+          classification: event.classification as 'Good' | 'Bad' | 'Neutral',
           count: 1,
         });
       }

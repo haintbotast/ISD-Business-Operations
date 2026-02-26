@@ -89,7 +89,8 @@
     },
     "classification": {
       "Good": "Tin tốt",
-      "Bad": "Tin xấu"
+      "Bad": "Tin xấu",
+      "Neutral": "Trung tính"
     },
     "severity": {
       "Critical": "Nghiêm trọng",

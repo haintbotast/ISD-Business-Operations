@@ -40,7 +40,7 @@ const eventSchema = z.object({
   rootCause: z.string().optional(),
   resolution: z.string().optional(),
   downtimeMinutes: z.coerce.number().int().min(0).optional(),
-  classification: z.enum(['Good', 'Bad']),
+  classification: z.enum(['Good', 'Bad', 'Neutral']),
   impactScope: z.enum(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise']).default('Site'),
   severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
   status: z.enum(['Open', 'In Progress', 'Resolved', 'Closed']),
@@ -117,7 +117,7 @@ export function EventForm({ eventId }: EventFormProps) {
         (c) => c.mainGroup === watchedMainGroup && c.category === category,
       );
       if (cat) {
-        form.setValue('classification', cat.classification as 'Good' | 'Bad');
+        form.setValue('classification', cat.classification as 'Good' | 'Bad' | 'Neutral');
       }
       form.setValue('category', category);
     },
@@ -383,14 +383,15 @@ export function EventForm({ eventId }: EventFormProps) {
             <Label>{t('event.fields.classification')}</Label>
             <Select
               value={form.watch('classification')}
-              onValueChange={(v) => form.setValue('classification', v as 'Good' | 'Bad', { shouldValidate: true })}
+              onValueChange={(v) => form.setValue('classification', v as 'Good' | 'Bad' | 'Neutral', { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Good">{t('event.classification.Good')}</SelectItem>
                 <SelectItem value="Bad">{t('event.classification.Bad')}</SelectItem>
+                <SelectItem value="Neutral">{t('event.classification.Neutral')}</SelectItem>
+                <SelectItem value="Good">{t('event.classification.Good')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

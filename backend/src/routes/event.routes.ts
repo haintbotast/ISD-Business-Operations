@@ -24,7 +24,7 @@ const createEventSchema = z.object({
   rootCause: z.string().optional(),
   resolution: z.string().optional(),
   downtimeMinutes: z.number().int().min(0).optional(),
-  classification: z.enum(['Good', 'Bad']),
+  classification: z.enum(['Good', 'Bad', 'Neutral']),
   impactScope: z.enum(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise']).optional(),
   severity: z.enum(['Critical', 'High', 'Medium', 'Low']).optional(),
   status: z.enum(['Open', 'In Progress', 'Resolved', 'Closed']).optional(),

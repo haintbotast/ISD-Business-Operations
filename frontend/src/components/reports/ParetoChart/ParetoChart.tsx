@@ -14,9 +14,17 @@ import { cn } from '@/lib/utils';
 // Priority zone  (cumulative ≤ 80%)  — vivid
 const BAD_PRI  = '#C00000';
 const GOOD_PRI = '#375623';
+const NEU_PRI  = '#2F5496';
 // Remaining zone (cumulative  > 80%) — muted
 const BAD_REM  = '#FF9999';
 const GOOD_REM = '#A8D08D';
+const NEU_REM  = '#9DC3E6';
+
+function barColor(classification: string, isPriority: boolean): string {
+  if (classification === 'Bad')     return isPriority ? BAD_PRI  : BAD_REM;
+  if (classification === 'Neutral') return isPriority ? NEU_PRI  : NEU_REM;
+  return isPriority ? GOOD_PRI : GOOD_REM;
+}
 
 // ─── Recurrence colour helper ──────────────────────────────────────────────────
 
@@ -111,9 +119,7 @@ export function ParetoChart({ initialYear, initialPeriodStart, initialPeriodEnd 
             formatter: String(item.count),
           },
           itemStyle: {
-            color: item.classification === 'Bad'
-              ? (idx < priorityCount ? BAD_PRI  : BAD_REM)
-              : (idx < priorityCount ? GOOD_PRI : GOOD_REM),
+            color: barColor(item.classification, idx < priorityCount),
             opacity: idx < priorityCount ? 1 : 0.6,
             borderRadius: [2, 2, 0, 0],
           },
@@ -245,11 +251,7 @@ export function ParetoChart({ initialYear, initialPeriodStart, initialPeriodEnd 
                       key={idx}
                       className={cn('border-t hover:bg-muted/20', idx >= priorityCount && 'opacity-70')}
                       style={{
-                        borderLeft: `3px solid ${
-                          item.classification === 'Bad'
-                            ? (idx < priorityCount ? BAD_PRI : BAD_REM)
-                            : (idx < priorityCount ? GOOD_PRI : GOOD_REM)
-                        }`,
+                        borderLeft: `3px solid ${barColor(item.classification, idx < priorityCount)}`,
                       }}
                     >
                       <td className="px-3 py-1.5 text-xs text-muted-foreground">{idx + 1}</td>

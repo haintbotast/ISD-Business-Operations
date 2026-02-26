@@ -16,7 +16,7 @@ export interface RiskMatrixItem {
   riskScore: number;       // impact × likelihood, range 1–16
   riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
   dominantScope: ImpactScope;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
 }
 
 export interface RiskMatrixData {
@@ -29,7 +29,7 @@ export interface RiskMatrixData {
 export interface ParetoItem {
   category: string;
   mainGroup: string;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   count: number;
   percentage: number;   // % of total
   cumulative: number;   // cumulative % (sorted desc)
@@ -59,7 +59,7 @@ export interface Event {
   rootCause?: string;
   resolution?: string;
   downtimeMinutes?: number;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   impactScope: ImpactScope;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
@@ -82,7 +82,7 @@ export interface CategoryMaster {
   id: string;
   mainGroup: string;
   category: string;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   isActive: boolean;
   sortOrder: number;
 }
@@ -134,7 +134,7 @@ export interface CreateEventDto {
   rootCause?: string;
   resolution?: string;
   downtimeMinutes?: number;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   impactScope?: ImpactScope;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
@@ -211,7 +211,7 @@ export interface DashboardDetailRow {
 
 export interface DashboardChartSeries {
   name: string;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
   data: number[];
 }
 
@@ -228,7 +228,7 @@ export interface WeeklyMatrixCell {
   severity: string;
   status: string;
   downtimeMinutes: number | null;
-  classification: 'Good' | 'Bad';
+  classification: 'Good' | 'Bad' | 'Neutral';
 }
 
 export interface WeeklyMatrixData {
@@ -239,7 +239,7 @@ export interface WeeklyMatrixData {
   categories: Array<{
     mainGroup: string;
     category: string;
-    classification: 'Good' | 'Bad';
+    classification: 'Good' | 'Bad' | 'Neutral';
   }>;
   cells: Record<string, WeeklyMatrixCell[]>;
 }
