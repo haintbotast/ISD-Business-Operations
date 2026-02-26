@@ -266,7 +266,8 @@
       "editTitle": "Chỉnh sửa danh mục",
       "createSuccess": "Đã thêm danh mục",
       "updateSuccess": "Đã cập nhật danh mục",
-      "deleteConfirm": "Bạn có chắc muốn vô hiệu hóa danh mục này?"
+      "deleteConfirm": "Bạn có chắc muốn vô hiệu hóa danh mục này?",
+      "renameWarning": "Đổi tên sẽ cập nhật tất cả sự kiện liên quan tự động."
     },
     "location": {
       "code": "Mã",

@@ -36,7 +36,7 @@ export function useCreateCategory() {
 export function useUpdateCategory() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string; classification?: string; isActive?: boolean; sortOrder?: number }) =>
+    mutationFn: ({ id, ...data }: { id: string; mainGroup?: string; category?: string; classification?: string; isActive?: boolean; sortOrder?: number }) =>
       api.put<ApiSuccess<CategoryMaster>>(`/categories/${id}`, data).then((r) => r.data.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });

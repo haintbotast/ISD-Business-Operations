@@ -67,7 +67,13 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       if (isEdit && initial) {
-        await updateMutation.mutateAsync({ id: initial.id, classification: data.classification, sortOrder: data.sortOrder });
+        await updateMutation.mutateAsync({
+          id: initial.id,
+          mainGroup: data.mainGroup,
+          category: data.category,
+          classification: data.classification,
+          sortOrder: data.sortOrder,
+        });
         toast.success(t('admin.category.updateSuccess'));
       } else {
         await createMutation.mutateAsync(data);
@@ -91,20 +97,19 @@ function CategoryDialog({ open, onClose, initial }: CategoryDialogProps) {
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
-          {!isEdit && (
-            <>
-              <div className="space-y-1">
-                <Label>{t('admin.category.mainGroup')}</Label>
-                <Input {...register('mainGroup')} placeholder="Hạ tầng" />
-                {errors.mainGroup && <p className="text-xs text-destructive">{errors.mainGroup.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>{t('admin.category.category')}</Label>
-                <Input {...register('category')} placeholder="Máy chủ / Server" />
-                {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
-              </div>
-            </>
-          )}
+          <div className="space-y-1">
+            <Label>{t('admin.category.mainGroup')}</Label>
+            <Input {...register('mainGroup')} placeholder="Hạ tầng" />
+            {errors.mainGroup && <p className="text-xs text-destructive">{errors.mainGroup.message}</p>}
+          </div>
+          <div className="space-y-1">
+            <Label>{t('admin.category.category')}</Label>
+            <Input {...register('category')} placeholder="Máy chủ / Server" />
+            {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
+            {isEdit && (
+              <p className="text-xs text-muted-foreground">{t('admin.category.renameWarning')}</p>
+            )}
+          </div>
           <div className="space-y-1">
             <Label>{t('admin.category.classification')}</Label>
             <Select
@@ -187,7 +192,7 @@ export function CategoryTable() {
                 <TableCell className="text-sm">{cat.mainGroup}</TableCell>
                 <TableCell className="text-sm">{cat.category}</TableCell>
                 <TableCell>
-                  <ClassificationBadge value={cat.classification as 'Good' | 'Bad'} />
+                  <ClassificationBadge value={cat.classification as 'Good' | 'Bad' | 'Neutral'} />
                 </TableCell>
                 <TableCell>
                   <Button

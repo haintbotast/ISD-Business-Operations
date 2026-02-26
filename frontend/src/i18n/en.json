@@ -266,7 +266,8 @@
       "editTitle": "Edit Category",
       "createSuccess": "Category added",
       "updateSuccess": "Category updated",
-      "deleteConfirm": "Are you sure you want to deactivate this category?"
+      "deleteConfirm": "Are you sure you want to deactivate this category?",
+      "renameWarning": "Renaming will automatically update all related events."
     },
     "location": {
       "code": "Code",
