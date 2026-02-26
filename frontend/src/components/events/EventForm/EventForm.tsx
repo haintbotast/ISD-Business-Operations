@@ -41,7 +41,8 @@ const eventSchema = z.object({
   resolution: z.string().optional(),
   downtimeMinutes: z.coerce.number().int().min(0).optional(),
   classification: z.enum(['Good', 'Bad', 'Neutral']),
-  impactScope: z.enum(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise']).default('Site'),
+  eventType: z.enum(['Incident', 'Change', 'Maintenance', 'Backup', 'ServiceRequest', 'Problem']).default('Incident'),
+  impactScope: z.enum(['Individual', 'Team', 'Project', 'Site', 'MultiSite', 'Enterprise', 'External']).default('Site'),
   severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
   status: z.enum(['Open', 'In Progress', 'Resolved', 'Closed']),
 });
@@ -96,6 +97,7 @@ export function EventForm({ eventId }: EventFormProps) {
       mainGroup: '',
       category: '',
       classification: 'Bad',
+      eventType: 'Incident',
       impactScope: 'Site',
       severity: 'Medium',
       status: 'Open',
@@ -135,6 +137,7 @@ export function EventForm({ eventId }: EventFormProps) {
         resolution: existingEvent.resolution ?? '',
         downtimeMinutes: existingEvent.downtimeMinutes ?? undefined,
         classification: existingEvent.classification as 'Good' | 'Bad',
+        eventType: (existingEvent.eventType ?? 'Incident') as EventFormValues['eventType'],
         impactScope: (existingEvent.impactScope ?? 'Site') as EventFormValues['impactScope'],
         severity: existingEvent.severity as EventFormValues['severity'],
         status: existingEvent.status as EventFormValues['status'],
@@ -454,6 +457,23 @@ export function EventForm({ eventId }: EventFormProps) {
       <Card>
         <CardContent className="flex flex-wrap gap-4 pt-6">
           <div className="space-y-1">
+            <Label>{t('event.fields.eventType')}</Label>
+            <Select
+              value={form.watch('eventType')}
+              onValueChange={(v) => form.setValue('eventType', v as EventFormValues['eventType'], { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(['Incident', 'Change', 'Maintenance', 'Backup', 'ServiceRequest', 'Problem'] as const).map((s) => (
+                  <SelectItem key={s} value={s}>{t(`event.eventType.${s}`)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
             <Label>{t('event.fields.severity')}</Label>
             <Select
               value={form.watch('severity')}
@@ -480,7 +500,7 @@ export function EventForm({ eventId }: EventFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise'] as const).map((s) => (
+                {(['Individual', 'Team', 'Project', 'Site', 'MultiSite', 'Enterprise', 'External'] as const).map((s) => (
                   <SelectItem key={s} value={s}>{t(`event.impactScope.${s}`)}</SelectItem>
                 ))}
               </SelectContent>

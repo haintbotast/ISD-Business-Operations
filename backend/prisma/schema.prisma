@@ -27,8 +27,9 @@ model Event {
   rootCause       String?   @map("root_cause")
   resolution      String?
   downtimeMinutes Int?      @map("downtime_minutes")
-  classification  String    // "Good" | "Bad"
-  impactScope     String    @default("Site") @map("impact_scope") // Individual|Team|Site|MultiSite|Enterprise
+  classification  String    // "Good" | "Bad" | "Neutral"
+  eventType       String    @default("Incident") @map("event_type") // Incident|Change|Maintenance|Backup|ServiceRequest|Problem
+  impactScope     String    @default("Site") @map("impact_scope") // Individual|Team|Project|Site|MultiSite|Enterprise|External
   severity        String    @default("Medium") // Critical | High | Medium | Low
   status          String    @default("Open")   // Open | In Progress | Resolved | Closed
   version         Int       @default(1)        // OCC — NEVER remove this field

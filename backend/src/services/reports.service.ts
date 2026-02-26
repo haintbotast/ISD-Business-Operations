@@ -9,22 +9,22 @@ const SEVERITY_MAP: Record<string, number> = {
 };
 
 const IMPACT_LABELS: Record<number, string> = {
-  1: 'Low (低)',
-  2: 'Medium (中)',
-  3: 'High (高)',
-  4: 'Critical (最高)',
+  1: 'Low',
+  2: 'Medium',
+  3: 'High',
+  4: 'Critical',
 };
 
-// ─── Likelihood (発生可能性) from event count ──────────────────────────────────
+// ─── Likelihood from event count ──────────────────────────────────────────────
 
 function likelihoodFromCount(count: number): { value: number; label: string } {
-  if (count <= 1) return { value: 1, label: 'Rare (稀少)' };
-  if (count <= 3) return { value: 2, label: 'Unlikely (低)' };
-  if (count <= 6) return { value: 3, label: 'Possible (中)' };
-  return { value: 4, label: 'Likely (高)' };
+  if (count <= 1) return { value: 1, label: 'Rare' };
+  if (count <= 3) return { value: 2, label: 'Unlikely' };
+  if (count <= 6) return { value: 3, label: 'Possible' };
+  return { value: 4, label: 'Likely' };
 }
 
-// ─── Risk Level (リスクレベル) from score 1–16 ─────────────────────────────────
+// ─── Risk Level from score 1–16 ───────────────────────────────────────────────
 
 function riskLevelFromScore(score: number): 'Low' | 'Medium' | 'High' | 'Critical' {
   if (score <= 4) return 'Low';
@@ -88,7 +88,9 @@ export const reportsService = {
     const where: Record<string, unknown> = {
       year,
       deletedAt: null,
-      classification: 'Bad', // Risk Matrix focuses on Bad (incident/problem) events
+      // Risk Matrix: Incidents and Problems represent operational risks (ITIL v4)
+      // Existing events before eventType field default to 'Incident'
+      eventType: { in: ['Incident', 'Problem'] },
     };
     if (weekCodes?.length) where.weekCode = { in: weekCodes };
 

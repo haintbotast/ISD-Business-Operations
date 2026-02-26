@@ -18,6 +18,7 @@ export const eventService = {
       ...(filters.category && { category: filters.category }),
       ...(filters.status && { status: filters.status }),
       ...(filters.classification && { classification: filters.classification }),
+      ...(filters.eventType && { eventType: filters.eventType }),
       ...(filters.search && {
         OR: [
           { description: { contains: filters.search } },
@@ -84,6 +85,7 @@ export const eventService = {
         resolution: data.resolution,
         downtimeMinutes: data.downtimeMinutes,
         classification: data.classification,
+        eventType: data.eventType ?? 'Incident',
         impactScope: data.impactScope ?? 'Site',
         severity: data.severity ?? 'Medium',
         status: data.status ?? 'Open',
@@ -116,6 +118,7 @@ export const eventService = {
         ...(fields.resolution !== undefined && { resolution: fields.resolution }),
         ...(fields.downtimeMinutes !== undefined && { downtimeMinutes: fields.downtimeMinutes }),
         ...(fields.classification !== undefined && { classification: fields.classification }),
+        ...(fields.eventType !== undefined && { eventType: fields.eventType }),
         ...(fields.impactScope !== undefined && { impactScope: fields.impactScope }),
         ...(fields.severity !== undefined && { severity: fields.severity }),
         ...(fields.status !== undefined && { status: fields.status }),

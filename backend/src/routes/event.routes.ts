@@ -25,7 +25,8 @@ const createEventSchema = z.object({
   resolution: z.string().optional(),
   downtimeMinutes: z.number().int().min(0).optional(),
   classification: z.enum(['Good', 'Bad', 'Neutral']),
-  impactScope: z.enum(['Individual', 'Team', 'Site', 'MultiSite', 'Enterprise']).optional(),
+  eventType: z.enum(['Incident', 'Change', 'Maintenance', 'Backup', 'ServiceRequest', 'Problem']).optional(),
+  impactScope: z.enum(['Individual', 'Team', 'Project', 'Site', 'MultiSite', 'Enterprise', 'External']).optional(),
   severity: z.enum(['Critical', 'High', 'Medium', 'Low']).optional(),
   status: z.enum(['Open', 'In Progress', 'Resolved', 'Closed']).optional(),
 });
@@ -114,6 +115,7 @@ router.get(
       category: req.query.category as string | undefined,
       status: req.query.status as string | undefined,
       classification: req.query.classification as string | undefined,
+      eventType: req.query.eventType as string | undefined,
       search: req.query.search as string | undefined,
     };
 

@@ -76,16 +76,27 @@
       "downtimeMinutes": "Downtime (minutes)",
       "classification": "Classification",
       "impactScope": "Impact Scope",
+      "eventType": "Event Type",
       "severity": "Severity",
       "status": "Status",
       "createdBy": "Created by"
     },
     "impactScope": {
-      "Individual": "Individual (個人)",
-      "Team": "Team / Dept (チーム)",
-      "Site": "Site (拠点)",
-      "MultiSite": "Multi-Site (複数拠点)",
-      "Enterprise": "Enterprise-wide (全社)"
+      "Individual": "Individual",
+      "Team": "Team / Dept",
+      "Project": "Project / Partner",
+      "Site": "Site",
+      "MultiSite": "Multi-Site",
+      "Enterprise": "Enterprise-wide",
+      "External": "External (Customer/Partner)"
+    },
+    "eventType": {
+      "Incident": "Incident",
+      "Change": "Change",
+      "Maintenance": "Maintenance",
+      "Backup": "Backup / DR",
+      "ServiceRequest": "Service Request",
+      "Problem": "Problem (RCA)"
     },
     "classification": {
       "Good": "Good News",
@@ -201,9 +212,9 @@
     "riskMatrix": "Risk Matrix",
     "riskMatrixTitle": "Risk Matrix — JIS Q 31000:2019",
     "riskMatrixNoData": "No risk data for this period",
-    "riskMatrixNote": "Shows Bad News events only. Bubble size = Impact Scope.",
+    "riskMatrixNote": "Shows Incident / Problem events only. Bubble size = Impact Scope.",
     "pareto": "Pareto Analysis",
-    "paretoTitle": "Pareto Analysis (パレート図) — JIS Z 8115",
+    "paretoTitle": "Pareto Analysis — JIS Z 8115",
     "paretoNoData": "No data for this period",
     "paretoRule": "80/20 Rule",
     "paretoInsightGroups": "top incident groups",
@@ -215,17 +226,19 @@
     "paretoRemainderTag": "Lower impact",
     "periodStart": "From week",
     "periodEnd": "To week",
+    "likelihoodAxis": "Likelihood",
+    "impactAxis": "Impact",
     "riskLevel": {
-      "Critical": "Urgent Action (要緊急対応)",
-      "High": "Risk Reduction (要低減措置)",
-      "Medium": "Monitor (要監視)",
-      "Low": "Acceptable (許容範囲)"
+      "Critical": "Urgent Action",
+      "High": "Risk Reduction",
+      "Medium": "Monitor",
+      "Low": "Acceptable"
     },
     "likelihood": {
-      "Rare": "Rare (稀少)",
-      "Unlikely": "Unlikely (低)",
-      "Possible": "Possible (中)",
-      "Likely": "Likely (高)"
+      "Rare": "Rare",
+      "Unlikely": "Unlikely",
+      "Possible": "Possible",
+      "Likely": "Likely"
     },
     "riskMatrixCols": {
       "category": "Category",

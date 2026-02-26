@@ -28,6 +28,7 @@ const JOURNAL_COL_DEFS: ColDef[] = [
   { field: 'status',         aliases: ['trang thai', 'status'],                 fallback: 14 },
   { field: 'createdBy',      aliases: ['nguoi tao', 'created by', 'tao boi'],   fallback: 15 },
   { field: 'impactScope',    aliases: ['pham vi', 'impact scope', 'anh huong pham vi'], fallback: 16 },
+  { field: 'eventType',     aliases: ['loai su kien', 'event type', 'kieu su kien'],  fallback: 17 },
 ];
 
 function normalize(s: string): string {
@@ -93,6 +94,7 @@ interface ParsedRow {
   downtimeMinutes: number | null;
   classification: string;
   impactScope: string;
+  eventType: string;
   severity: string;
   status: string;
   createdBy: string;
@@ -163,6 +165,17 @@ function parseRows(rows: unknown[][]): ParsedRow[] {
     else if (normStatus.includes('resolv') || normStatus.includes('giai quyet')) status = 'Resolved';
     else if (normStatus.includes('clos') || normStatus.includes('dong')) status = 'Closed';
 
+    const rawEventType = cellStr(row, colMap['eventType']);
+    const eventTypeMap: Record<string, string> = {
+      incident: 'Incident', 'su co': 'Incident', 'su co ngoai ke hoach': 'Incident',
+      change: 'Change', 'thay doi': 'Change', 'trien khai': 'Change',
+      maintenance: 'Maintenance', 'bao tri': 'Maintenance', 'bao tri dinh ky': 'Maintenance',
+      backup: 'Backup', 'sao luu': 'Backup', 'du phong': 'Backup',
+      servicerequest: 'ServiceRequest', 'yeu cau': 'ServiceRequest', 'service request': 'ServiceRequest',
+      problem: 'Problem', 'van de': 'Problem', 'nguyen nhan goc re': 'Problem',
+    };
+    const eventType = eventTypeMap[normalize(rawEventType)] ?? 'Incident';
+
     const year = dateObj ? dateObj.getUTCFullYear() : null;
 
     parsed.push({
@@ -180,6 +193,7 @@ function parseRows(rows: unknown[][]): ParsedRow[] {
       resolution: cellStr(row, colMap['resolution']),
       downtimeMinutes,
       classification,
+      eventType,
       impactScope,
       severity,
       status,
@@ -326,6 +340,7 @@ export const importService = {
             resolution: row.resolution || null,
             downtimeMinutes: row.downtimeMinutes,
             classification: row.classification,
+            eventType: row.eventType,
             impactScope: row.impactScope,
             severity: row.severity,
             status: row.status,

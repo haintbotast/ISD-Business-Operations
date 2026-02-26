@@ -43,6 +43,7 @@ type ExcelEventSeed = {
   resolution: string | null;
   downtimeMinutes: number | null;
   classification: 'Good' | 'Bad' | 'Neutral';
+  eventType: 'Incident' | 'Change' | 'Maintenance' | 'Backup' | 'ServiceRequest' | 'Problem';
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
   createdBy: string | null;
@@ -81,9 +82,11 @@ const FALLBACK_CATEGORIES: CategorySeed[] = [
   { mainGroup: 'Vận hành', category: 'Triển khai / Deployment', sortOrder: 14 },
   { mainGroup: 'Vận hành', category: 'Change Request', sortOrder: 15 },
   { mainGroup: 'Vận hành', category: 'Rollback', sortOrder: 16 },
-  { mainGroup: 'Kết nối', category: 'Internet', sortOrder: 17 },
-  { mainGroup: 'Kết nối', category: 'WAN / MPLS', sortOrder: 18 },
-  { mainGroup: 'Kết nối', category: 'Mạng nội bộ LAN', sortOrder: 19 },
+  { mainGroup: 'Vận hành', category: 'Sao lưu dự phòng', sortOrder: 17 },
+  { mainGroup: 'Vận hành', category: 'Giám sát / Monitoring', sortOrder: 18 },
+  { mainGroup: 'Kết nối', category: 'Internet', sortOrder: 19 },
+  { mainGroup: 'Kết nối', category: 'WAN / MPLS', sortOrder: 20 },
+  { mainGroup: 'Kết nối', category: 'Mạng nội bộ LAN', sortOrder: 21 },
 ];
 
 function normalizeText(value: unknown): string {
@@ -209,6 +212,24 @@ function mapSeverity(raw: string, category: string): 'Critical' | 'High' | 'Medi
   const categoryToken = normalizeForMatch(category);
   if (/(downtime|su co|moi de doa|bao mat)/.test(categoryToken)) return 'High';
   return 'Medium';
+}
+
+function mapEventType(
+  rawClassification: string,
+  mainGroup: string,
+  category: string,
+): 'Incident' | 'Change' | 'Maintenance' | 'Backup' | 'ServiceRequest' | 'Problem' {
+  const cat = normalizeForMatch(category);
+  const grp = normalizeForMatch(mainGroup);
+  if (cat.includes('sao luu') || cat.includes('backup') || cat.includes('du phong')) return 'Backup';
+  if (cat.includes('giam sat') || cat.includes('monitor')) return 'Maintenance';
+  if (cat.includes('bao tri') || cat.includes('maintenance')) return 'Maintenance';
+  if (cat.includes('trien khai') || cat.includes('deployment') || cat.includes('change request')) return 'Change';
+  if (cat.includes('rollback')) return 'Change';
+  const cls = normalizeForMatch(rawClassification);
+  if (cls.includes('good')) return 'Change'; // planned, successful work
+  if (grp.includes('van hanh')) return 'Change';
+  return 'Incident';
 }
 
 function inferDowntimeMinutes(rawDowntime: unknown, description: string, category: string): number | null {
@@ -376,6 +397,7 @@ function loadExcelSeedData(): ExcelSeedData | null {
     const severity = mapSeverity(rawSeverity, category);
     const status = mapStatus(rawStatus);
     const downtimeMinutes = inferDowntimeMinutes(rawDowntime, description, category);
+    const eventType = mapEventType(rawClassification, mainGroup, category);
 
     const event: ExcelEventSeed = {
       year,
@@ -391,6 +413,7 @@ function loadExcelSeedData(): ExcelSeedData | null {
       resolution,
       downtimeMinutes,
       classification,
+      eventType,
       severity,
       status,
       createdBy,
@@ -584,6 +607,7 @@ async function seedEventsFromExcel(excelData: ExcelSeedData | null) {
             resolution: event.resolution,
             downtimeMinutes: event.downtimeMinutes,
             classification: event.classification,
+            eventType: event.eventType,
             severity: event.severity,
             status: event.status,
             createdBy: event.createdBy,

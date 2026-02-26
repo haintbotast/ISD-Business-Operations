@@ -43,7 +43,9 @@ export const RISK_LEVEL_COLORS: Record<string, string> = {
 export const IMPACT_SCOPE_WEIGHTS: Record<string, number> = {
   Individual: 15,  // 個人
   Team:       25,  // チーム
+  Project:    30,  // プロジェクト (inhouse/partner project)
   Site:       35,  // 拠点 (default)
   MultiSite:  50,  // 複数拠点
   Enterprise: 70,  // 全社
+  External:   85,  // 外部 (partners, customers)
 };

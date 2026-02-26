@@ -141,8 +141,14 @@ export function RiskMatrix({ initialYear, initialPeriodStart, initialPeriodEnd }
 
   const bgMarkAreaData = buildBgMarkArea();
 
-  const LIKELIHOOD_LABELS = ['', 'Rare\n(稀少)', 'Unlikely\n(低)', 'Possible\n(中)', 'Likely\n(高)'];
-  const IMPACT_LABELS     = ['', 'Low\n(低)', 'Medium\n(中)', 'High\n(高)', 'Critical\n(最高)'];
+  const likelihoodLabels = [
+    '',
+    t('reports.likelihood.Rare'),
+    t('reports.likelihood.Unlikely'),
+    t('reports.likelihood.Possible'),
+    t('reports.likelihood.Likely'),
+  ];
+  const impactLabels = ['', 'Low', 'Medium', 'High', 'Critical'];
 
   const option = {
     textStyle: { fontFamily: '"Noto Sans JP", "Segoe UI", sans-serif' },
@@ -152,12 +158,12 @@ export function RiskMatrix({ initialYear, initialPeriodStart, initialPeriodEnd }
         const d = params.data as [number, number, number, string, string, string, number];
         return [
           `<b>${d[5]}</b>`,
-          `リスクスコア / Risk Score: <b>${d[2]}</b>`,
-          `リスクレベル / Level: <b>${d[4]}</b>`,
-          `影響度 / Impact: <b>${IMPACT_LABELS[d[1]] ?? d[1]}</b>`,
-          `発生可能性 / Likelihood: <b>${LIKELIHOOD_LABELS[d[0]] ?? d[0]}</b>`,
-          `影響範囲 / Scope: <b>${d[3]}</b>`,
-          `件数 / Events: <b>${d[6]}</b>`,
+          `${t('reports.riskMatrixCols.riskScore')}: <b>${d[2]}</b>`,
+          `${t('reports.riskMatrixCols.riskLevel')}: <b>${d[4]}</b>`,
+          `${t('reports.riskMatrixCols.impact')}: <b>${impactLabels[d[1]] ?? d[1]}</b>`,
+          `${t('reports.riskMatrixCols.likelihood')}: <b>${likelihoodLabels[d[0]] ?? d[0]}</b>`,
+          `${t('reports.riskMatrixCols.dominantScope')}: <b>${d[3]}</b>`,
+          `${t('reports.riskMatrixCols.eventCount')}: <b>${d[6]}</b>`,
         ].join('<br/>');
       },
       appendToBody: true,
@@ -165,28 +171,28 @@ export function RiskMatrix({ initialYear, initialPeriodStart, initialPeriodEnd }
     grid: { left: 70, right: 20, top: 30, bottom: 60, containLabel: false },
     xAxis: {
       type: 'value',
-      name: '発生可能性 (Likelihood)',
+      name: t('reports.likelihoodAxis'),
       nameLocation: 'middle',
       nameGap: 40,
       min: 0.5,
       max: 4.5,
       interval: 1,
       axisLabel: {
-        formatter: (v: number) => LIKELIHOOD_LABELS[v] ?? '',
+        formatter: (v: number) => likelihoodLabels[v] ?? '',
         fontSize: 10,
       },
       splitLine: { lineStyle: { color: '#ddd', type: 'dashed' } },
     },
     yAxis: {
       type: 'value',
-      name: '影響度 (Impact)',
+      name: t('reports.impactAxis'),
       nameLocation: 'middle',
       nameGap: 55,
       min: 0.5,
       max: 4.5,
       interval: 1,
       axisLabel: {
-        formatter: (v: number) => IMPACT_LABELS[v] ?? '',
+        formatter: (v: number) => impactLabels[v] ?? '',
         fontSize: 10,
       },
       splitLine: { lineStyle: { color: '#ddd', type: 'dashed' } },
@@ -212,6 +218,7 @@ export function RiskMatrix({ initialYear, initialPeriodStart, initialPeriodEnd }
           fontSize: 10,
           color: '#333',
         },
+        labelLayout: { hideOverlap: true },
         markArea: {
           silent: true,
           data: bgMarkAreaData,

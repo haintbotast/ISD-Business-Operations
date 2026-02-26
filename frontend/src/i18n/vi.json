@@ -76,16 +76,27 @@
       "downtimeMinutes": "Thời gian ngừng (phút)",
       "classification": "Phân loại",
       "impactScope": "Phạm vi ảnh hưởng",
+      "eventType": "Loại sự kiện",
       "severity": "Mức độ",
       "status": "Trạng thái",
       "createdBy": "Người tạo"
     },
     "impactScope": {
-      "Individual": "Cá nhân (個人)",
-      "Team": "Nhóm / Bộ phận (チーム)",
-      "Site": "Chi nhánh (拠点)",
-      "MultiSite": "Liên chi nhánh (複数拠点)",
-      "Enterprise": "Toàn tổ chức (全社)"
+      "Individual": "Cá nhân",
+      "Team": "Nhóm / Bộ phận",
+      "Project": "Dự án nội bộ / Đối tác",
+      "Site": "Chi nhánh",
+      "MultiSite": "Liên chi nhánh",
+      "Enterprise": "Toàn tổ chức",
+      "External": "Bên ngoài (KH / ĐT)"
+    },
+    "eventType": {
+      "Incident": "Sự cố",
+      "Change": "Thay đổi",
+      "Maintenance": "Bảo trì",
+      "Backup": "Sao lưu / Dự phòng",
+      "ServiceRequest": "Yêu cầu dịch vụ",
+      "Problem": "Vấn đề gốc rễ"
     },
     "classification": {
       "Good": "Tin tốt",
@@ -201,9 +212,9 @@
     "riskMatrix": "Ma trận rủi ro",
     "riskMatrixTitle": "Ma trận rủi ro — JIS Q 31000:2019",
     "riskMatrixNoData": "Không có dữ liệu rủi ro cho kỳ này",
-    "riskMatrixNote": "Chỉ hiển thị sự kiện Tin xấu (Bad News). Kích thước bong bóng = Phạm vi ảnh hưởng.",
+    "riskMatrixNote": "Chỉ hiển thị sự kiện loại Sự cố / Vấn đề. Kích thước bong bóng = Phạm vi ảnh hưởng.",
     "pareto": "Phân tích Pareto",
-    "paretoTitle": "Phân tích Pareto (パレート図) — JIS Z 8115",
+    "paretoTitle": "Phân tích Pareto — JIS Z 8115",
     "paretoNoData": "Không có dữ liệu cho kỳ này",
     "paretoRule": "Quy tắc 80/20",
     "paretoInsightGroups": "nhóm sự cố hàng đầu",
@@ -215,17 +226,19 @@
     "paretoRemainderTag": "Ít ảnh hưởng hơn",
     "periodStart": "Từ tuần",
     "periodEnd": "Đến tuần",
+    "likelihoodAxis": "Khả năng xảy ra",
+    "impactAxis": "Mức độ tác động",
     "riskLevel": {
-      "Critical": "Xử lý khẩn (要緊急対応)",
-      "High": "Cần giảm thiểu (要低減措置)",
-      "Medium": "Theo dõi (要監視)",
-      "Low": "Chấp nhận được (許容範囲)"
+      "Critical": "Xử lý khẩn",
+      "High": "Cần giảm thiểu",
+      "Medium": "Theo dõi",
+      "Low": "Chấp nhận được"
     },
     "likelihood": {
-      "Rare": "Hiếm khi (稀少)",
-      "Unlikely": "Khó xảy ra (低)",
-      "Possible": "Có thể xảy ra (中)",
-      "Likely": "Thường xảy ra (高)"
+      "Rare": "Hiếm khi",
+      "Unlikely": "Khó xảy ra",
+      "Possible": "Có thể xảy ra",
+      "Likely": "Thường xảy ra"
     },
     "riskMatrixCols": {
       "category": "Danh mục",

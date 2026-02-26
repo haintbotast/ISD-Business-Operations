@@ -39,8 +39,9 @@ export interface CreateEventDto {
   rootCause?: string;
   resolution?: string;
   downtimeMinutes?: number;
-  classification: string; // "Good" | "Bad"
-  impactScope?: string;   // Individual | Team | Site | MultiSite | Enterprise
+  classification: string; // "Good" | "Bad" | "Neutral"
+  eventType?: string;     // Incident | Change | Maintenance | Backup | ServiceRequest | Problem
+  impactScope?: string;   // Individual | Team | Project | Site | MultiSite | Enterprise | External
   severity?: string;
   status?: string;
 }
@@ -78,6 +79,7 @@ export interface EventFilters {
   category?: string;
   status?: string;
   classification?: string;
+  eventType?: string;
   search?: string;
 }
 
@@ -234,9 +236,20 @@ export interface UpdateUserDto {
   isActive?: boolean;
 }
 
-// ─── Impact Scope (影響範囲 / JIS Q 31000) ────────────────────────────────────
+// ─── Event Type (ITIL v4) ─────────────────────────────────────────────────────
 
-export type ImpactScope = 'Individual' | 'Team' | 'Site' | 'MultiSite' | 'Enterprise';
+export type EventType =
+  | 'Incident'       // Sự cố ngoài kế hoạch
+  | 'Change'         // Thay đổi có kế hoạch
+  | 'Maintenance'    // Bảo trì định kỳ
+  | 'Backup'         // Sao lưu / DR
+  | 'ServiceRequest' // Yêu cầu dịch vụ
+  | 'Problem';       // RCA / điều tra nguyên nhân
+
+// ─── Impact Scope (JIS Q 31000) ───────────────────────────────────────────────
+
+export type ImpactScope =
+  | 'Individual' | 'Team' | 'Project' | 'Site' | 'MultiSite' | 'Enterprise' | 'External';
 
 // ─── Risk Matrix (リスクマトリクス / JIS Q 31000) ─────────────────────────────
 

@@ -1,6 +1,23 @@
+// ─── Event Type (ITIL v4) ─────────────────────────────────────────────────────
+
+export type EventType =
+  | 'Incident'
+  | 'Change'
+  | 'Maintenance'
+  | 'Backup'
+  | 'ServiceRequest'
+  | 'Problem';
+
 // ─── Impact Scope (影響範囲 / JIS Q 31000) ────────────────────────────────────
 
-export type ImpactScope = 'Individual' | 'Team' | 'Site' | 'MultiSite' | 'Enterprise';
+export type ImpactScope =
+  | 'Individual'
+  | 'Team'
+  | 'Project'
+  | 'Site'
+  | 'MultiSite'
+  | 'Enterprise'
+  | 'External';
 
 // ─── Risk Matrix (リスクマトリクス / JIS Q 31000) ─────────────────────────────
 
@@ -60,6 +77,7 @@ export interface Event {
   resolution?: string;
   downtimeMinutes?: number;
   classification: 'Good' | 'Bad' | 'Neutral';
+  eventType: EventType;
   impactScope: ImpactScope;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
@@ -134,6 +152,7 @@ export interface CreateEventDto {
   resolution?: string;
   downtimeMinutes?: number;
   classification: 'Good' | 'Bad' | 'Neutral';
+  eventType?: EventType;
   impactScope?: ImpactScope;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
@@ -154,6 +173,7 @@ export interface EventFilters {
   mainGroup?: string;
   category?: string;
   classification?: 'Good' | 'Bad';
+  eventType?: string;
   severity?: string;
   status?: string;
   search?: string;
