@@ -1,10 +1,19 @@
 // TopIssues.tsx — "Vấn đề nổi bật" panel (plain-language Pareto summary for leadership)
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePareto } from '@/hooks/useReports';
 import { cn } from '@/lib/utils';
+
+// Recurrence badge color thresholds (weeks appeared / total weeks in year)
+function recurrenceColor(weeksAppeared: number, totalWeeks: number): string {
+  if (totalWeeks === 0) return 'text-muted-foreground';
+  const ratio = weeksAppeared / totalWeeks;
+  if (ratio >= 0.75) return 'text-red-600';
+  if (ratio >= 0.5)  return 'text-orange-500';
+  return 'text-muted-foreground';
+}
 
 interface TopIssuesProps {
   year: number;
@@ -22,6 +31,7 @@ export function TopIssues({ year, periodStart, periodEnd, enabled = true }: TopI
 
   const items = (data?.items ?? []).slice(0, 5);
   const maxCount = items[0]?.count ?? 1;
+  const totalWeeks = data?.totalWeeksInYear ?? 0;
 
   return (
     <Card className="flex flex-col">
@@ -71,6 +81,22 @@ export function TopIssues({ year, periodStart, periodEnd, enabled = true }: TopI
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
+                      {/* Recurrence indicator: X/Y weeks in year (closed included) */}
+                      {totalWeeks > 0 && item.weeksAppeared > 0 && (
+                        <span
+                          className={cn(
+                            'flex items-center gap-0.5 text-xs font-medium',
+                            recurrenceColor(item.weeksAppeared, totalWeeks),
+                          )}
+                          title={t('dashboard.topIssues.recurrenceTooltip', {
+                            weeks: item.weeksAppeared,
+                            total: totalWeeks,
+                          })}
+                        >
+                          <RefreshCw className="h-2.5 w-2.5" />
+                          {item.weeksAppeared}/{totalWeeks}T
+                        </span>
+                      )}
                       <span
                         className={cn(
                           'rounded px-1.5 py-0.5 text-xs font-medium',

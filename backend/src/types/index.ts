@@ -270,10 +270,12 @@ export interface ParetoItem {
   count: number;
   percentage: number;   // % of total
   cumulative: number;   // cumulative % (sorted desc)
+  weeksAppeared: number;    // distinct weeks this category appeared in the year (closed included)
 }
 
 export interface ParetoResponse {
   period: string;
   total: number;
+  totalWeeksInYear: number; // distinct weeks with any data in the year
   items: ParetoItem[];
 }

@@ -154,7 +154,8 @@
       "subtitle": "Nhóm sự cố xuất hiện nhiều nhất trong kỳ",
       "viewAll": "Xem chi tiết",
       "noData": "Không có dữ liệu cho kỳ này",
-      "hint": "Tập trung xử lý các nhóm trên giúp giảm nhanh tổng số sự cố"
+      "hint": "Tập trung xử lý các nhóm trên giúp giảm nhanh tổng số sự cố",
+      "recurrenceTooltip": "Xuất hiện {{weeks}}/{{total}} tuần trong năm (kể cả đã đóng) — dấu hiệu cần kế hoạch phòng ngừa"
     },
     "alertPanel": {
       "title": "Sự cố cần chú ý",
@@ -226,7 +227,9 @@
       "category": "Danh mục",
       "count": "Số lượng",
       "percentage": "Tỷ lệ (%)",
-      "cumulative": "Tích lũy (%)"
+      "cumulative": "Tích lũy (%)",
+      "recurrence": "Lặp lại (năm)",
+      "recurrenceTooltip": "Số tuần danh mục này xuất hiện trong năm — bao gồm cả sự cố đã đóng. Tần suất cao → vấn đề cần kế hoạch phòng ngừa gốc rễ."
     }
   },
   "admin": {

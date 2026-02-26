@@ -26,6 +26,7 @@ export function ParetoChart() {
   const { data, isLoading } = usePareto({ year, periodStart, periodEnd });
 
   const items = data?.items ?? [];
+  const totalWeeksInYear = data?.totalWeeksInYear ?? 0;
 
   // Counters for alternating palette index per classification
   const badIdx: Record<string, number>  = {};
@@ -196,6 +197,12 @@ export function ParetoChart() {
                   <th className="px-3 py-2 text-center font-semibold">{t('reports.paretoCols.count')}</th>
                   <th className="px-3 py-2 text-center font-semibold">{t('reports.paretoCols.percentage')}</th>
                   <th className="px-3 py-2 text-center font-semibold">{t('reports.paretoCols.cumulative')}</th>
+                  <th
+                    className="px-3 py-2 text-center font-semibold"
+                    title={t('reports.paretoCols.recurrenceTooltip')}
+                  >
+                    {t('reports.paretoCols.recurrence')}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -220,6 +227,24 @@ export function ParetoChart() {
                       >
                         {item.cumulative}%
                       </span>
+                    </td>
+                    <td className="px-3 py-1.5 text-center">
+                      {totalWeeksInYear > 0 ? (
+                        <span
+                          className={
+                            item.weeksAppeared / totalWeeksInYear >= 0.75
+                              ? 'font-semibold text-red-600'
+                              : item.weeksAppeared / totalWeeksInYear >= 0.5
+                                ? 'font-semibold text-orange-500'
+                                : 'text-muted-foreground'
+                          }
+                          title={t('reports.paretoCols.recurrenceTooltip')}
+                        >
+                          {item.weeksAppeared}/{totalWeeksInYear}T
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

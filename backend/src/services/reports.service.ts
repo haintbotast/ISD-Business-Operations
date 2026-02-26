@@ -176,10 +176,28 @@ export const reportsService = {
     const where: Record<string, unknown> = { year, deletedAt: null };
     if (weekCodes?.length) where.weekCode = { in: weekCodes };
 
+    // Period-filtered events for count/pareto
     const events = await prisma.event.findMany({
       where,
       select: { category: true, mainGroup: true, classification: true },
     });
+
+    // Year-wide recurrence: count distinct weeks per category (closed events included)
+    // This is a separate query with NO period filter so closed incidents still count.
+    const yearEvents = await prisma.event.findMany({
+      where: { year, deletedAt: null },
+      select: { category: true, weekCode: true },
+    });
+
+    // Build recurrence map: category → Set<weekCode>
+    const recurrenceMap = new Map<string, Set<string>>();
+    const yearWeekSet = new Set<string>();
+    for (const e of yearEvents) {
+      if (!recurrenceMap.has(e.category)) recurrenceMap.set(e.category, new Set());
+      recurrenceMap.get(e.category)!.add(e.weekCode);
+      yearWeekSet.add(e.weekCode);
+    }
+    const totalWeeksInYear = yearWeekSet.size;
 
     type Group = { mainGroup: string; classification: 'Good' | 'Bad'; count: number };
     const groups = new Map<string, Group>();
@@ -209,9 +227,10 @@ export const reportsService = {
         count: g.count,
         percentage: total > 0 ? Number(((g.count / total) * 100).toFixed(1)) : 0,
         cumulative: total > 0 ? Number(((cumCount / total) * 100).toFixed(1)) : 0,
+        weeksAppeared: recurrenceMap.get(category)?.size ?? 0,
       };
     });
 
-    return { period, total, items };
+    return { period, total, totalWeeksInYear, items };
   },
 };

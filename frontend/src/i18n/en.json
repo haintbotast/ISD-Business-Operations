@@ -154,7 +154,8 @@
       "subtitle": "Most frequent incident groups in this period",
       "viewAll": "View details",
       "noData": "No data for this period",
-      "hint": "Resolving these top groups will reduce the majority of incidents"
+      "hint": "Resolving these top groups will reduce the majority of incidents",
+      "recurrenceTooltip": "Appeared {{weeks}}/{{total}} weeks in the year (including closed) — signals need for a prevention plan"
     },
     "alertPanel": {
       "title": "Needs Attention",
@@ -226,7 +227,9 @@
       "category": "Category",
       "count": "Count",
       "percentage": "Percentage (%)",
-      "cumulative": "Cumulative (%)"
+      "cumulative": "Cumulative (%)",
+      "recurrence": "Recurrence (year)",
+      "recurrenceTooltip": "Number of weeks this category appeared in the year — including closed incidents. High frequency = needs a root-cause prevention plan."
     }
   },
   "admin": {
