@@ -1,5 +1,6 @@
 import ReactECharts from 'echarts-for-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CATEGORY_PALETTE } from '@/lib/colors';
 import type { DashboardChartSeries } from '@/types';
 
 interface TrendChartProps {
@@ -9,22 +10,28 @@ interface TrendChartProps {
   isLoading?: boolean;
 }
 
-const BAD_COLORS     = ['#C00000', '#FF6666', '#FF9999', '#FFCCCC'];
-const GOOD_COLORS    = ['#375623', '#70AD47', '#AADEAA', '#E2F0D9'];
-const NEUTRAL_COLORS = ['#2F5496', '#4472C4', '#9DC3E6', '#DEEAF1'];
-
-function seriesColor(classification: 'Good' | 'Bad' | 'Neutral', index: number): string {
-  const palette = classification === 'Bad' ? BAD_COLORS : classification === 'Neutral' ? NEUTRAL_COLORS : GOOD_COLORS;
-  return palette[index % palette.length];
+// Assign each unique series name a stable palette index so colors don't shift on re-render.
+function buildColorMap(series: DashboardChartSeries[]): Map<string, string> {
+  const map = new Map<string, string>();
+  let idx = 0;
+  for (const s of series) {
+    if (!map.has(s.name)) {
+      map.set(s.name, CATEGORY_PALETTE[idx % CATEGORY_PALETTE.length]);
+      idx++;
+    }
+  }
+  return map;
 }
 
 export function TrendChart({ title, xAxis, series, isLoading = false }: TrendChartProps) {
-  const mappedSeries = series.map((item, index) => ({
+  const colorMap = buildColorMap(series);
+
+  const mappedSeries = series.map((item) => ({
     name: item.name,
     type: 'bar',
     stack: 'total',
     emphasis: { focus: 'series' },
-    itemStyle: { color: seriesColor(item.classification, index) },
+    itemStyle: { color: colorMap.get(item.name) },
     data: item.data,
   }));
 
@@ -35,10 +42,10 @@ export function TrendChart({ title, xAxis, series, isLoading = false }: TrendCha
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="h-80 animate-pulse rounded-md bg-muted" />
+          <div className="h-96 animate-pulse rounded-md bg-muted" />
         ) : (
           <ReactECharts
-            style={{ height: '320px', width: '100%' }}
+            style={{ height: '380px', width: '100%' }}
             notMerge
             option={{
               animation: true,
@@ -46,8 +53,13 @@ export function TrendChart({ title, xAxis, series, isLoading = false }: TrendCha
                 fontFamily: '"Noto Sans JP", "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif',
               },
               tooltip: { trigger: 'axis', appendToBody: true },
-              legend: { type: 'scroll', top: 0 },
-              grid: { left: 24, right: 16, bottom: 24, top: 56, containLabel: true },
+              legend: {
+                type: 'plain',
+                orient: 'horizontal',
+                bottom: 0,
+                textStyle: { fontSize: 10 },
+              },
+              grid: { left: 24, right: 16, bottom: 64, top: 16, containLabel: true },
               xAxis: {
                 type: 'category',
                 data: xAxis,

@@ -143,10 +143,15 @@
     "timeRange": "Time Range",
     "kpis": {
       "totalEvents": "Total Events",
-      "downtimeMinutes": "Downtime (mins)",
-      "closureRate": "Closure Rate (%)",
+      "downtimeMinutes": "System Uptime",
+      "closureRate": "Closure Rate",
       "severeIncidents": "Severe incidents",
       "openInProgress": "Open/In Progress"
+    },
+    "sla": {
+      "downtimeSubLabel": "{{min}} min downtime · SLA ≤ {{max}} min",
+      "uptimeTarget": "SLA ≥ {{pct}}%",
+      "closureSubLabel": "Target ≥ {{target}}%"
     },
     "presets": {
       "current": "Current",

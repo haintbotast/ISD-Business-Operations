@@ -157,14 +157,16 @@ export const reportsService = {
 
   /**
    * FR-013: Pareto Analysis — JIS Z 8115
-   * All events (Bad + Good) sorted by count desc with cumulative %.
+   * Groups by (category, systemComponent) for specific patterns.
+   * Supports classificationFilter='Bad' (used by TopIssues) or 'all' (full Pareto chart).
    */
   async getPareto(params: {
     year: number;
     periodStart?: string;
     periodEnd?: string;
+    classificationFilter?: 'Bad' | 'all';
   }): Promise<ParetoResponse> {
-    const { year } = params;
+    const { year, classificationFilter = 'all' } = params;
     let weekCodes: string[] | undefined;
     let period: string;
 
@@ -177,39 +179,47 @@ export const reportsService = {
 
     const where: Record<string, unknown> = { year, deletedAt: null };
     if (weekCodes?.length) where.weekCode = { in: weekCodes };
+    if (classificationFilter === 'Bad') where.classification = 'Bad';
 
-    // Period-filtered events for count/pareto
+    // Period-filtered events for count/pareto — group by (category, systemComponent)
     const events = await prisma.event.findMany({
       where,
-      select: { category: true, mainGroup: true, classification: true },
+      select: { category: true, mainGroup: true, classification: true, systemComponent: true },
     });
 
-    // Year-wide recurrence: count distinct weeks per category (closed events included)
-    // This is a separate query with NO period filter so closed incidents still count.
+    // Year-wide recurrence: distinct weeks per (category|systemComponent) key
     const yearEvents = await prisma.event.findMany({
       where: { year, deletedAt: null },
-      select: { category: true, weekCode: true },
+      select: { category: true, systemComponent: true, weekCode: true },
     });
 
-    // Build recurrence map: category → Set<weekCode>
     const recurrenceMap = new Map<string, Set<string>>();
     const yearWeekSet = new Set<string>();
     for (const e of yearEvents) {
-      if (!recurrenceMap.has(e.category)) recurrenceMap.set(e.category, new Set());
-      recurrenceMap.get(e.category)!.add(e.weekCode);
+      const key = `${e.category}|${e.systemComponent ?? ''}`;
+      if (!recurrenceMap.has(key)) recurrenceMap.set(key, new Set());
+      recurrenceMap.get(key)!.add(e.weekCode);
       yearWeekSet.add(e.weekCode);
     }
     const totalWeeksInYear = yearWeekSet.size;
 
-    type Group = { mainGroup: string; classification: 'Good' | 'Bad' | 'Neutral'; count: number };
+    type Group = {
+      mainGroup: string;
+      systemComponent?: string;
+      classification: 'Good' | 'Bad' | 'Neutral';
+      count: number;
+    };
+
     const groups = new Map<string, Group>();
     for (const event of events) {
-      const existing = groups.get(event.category);
+      const key = `${event.category}|${event.systemComponent ?? ''}`;
+      const existing = groups.get(key);
       if (existing) {
         existing.count += 1;
       } else {
-        groups.set(event.category, {
+        groups.set(key, {
           mainGroup: event.mainGroup,
+          systemComponent: event.systemComponent ?? undefined,
           classification: event.classification as 'Good' | 'Bad' | 'Neutral',
           count: 1,
         });
@@ -220,16 +230,18 @@ export const reportsService = {
     const sorted = Array.from(groups.entries()).sort((a, b) => b[1].count - a[1].count);
 
     let cumCount = 0;
-    const items: ParetoItem[] = sorted.map(([category, g]) => {
+    const items: ParetoItem[] = sorted.map(([key, g]) => {
+      const category = key.split('|')[0];
       cumCount += g.count;
       return {
         category,
         mainGroup: g.mainGroup,
+        systemComponent: g.systemComponent,
         classification: g.classification,
         count: g.count,
         percentage: total > 0 ? Number(((g.count / total) * 100).toFixed(1)) : 0,
         cumulative: total > 0 ? Number(((cumCount / total) * 100).toFixed(1)) : 0,
-        weeksAppeared: recurrenceMap.get(category)?.size ?? 0,
+        weeksAppeared: recurrenceMap.get(key)?.size ?? 0,
       };
     });
 

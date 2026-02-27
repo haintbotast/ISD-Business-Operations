@@ -27,7 +27,7 @@ const GOOD_COLOR = '#70AD47';
 
 export function TopIssues({ year, periodStart, periodEnd, enabled = true }: TopIssuesProps) {
   const { t } = useTranslation();
-  const { data, isLoading } = usePareto({ year, periodStart, periodEnd }, enabled);
+  const { data, isLoading } = usePareto({ year, periodStart, periodEnd, classificationFilter: 'Bad' }, enabled);
 
   const items = (data?.items ?? []).slice(0, 5);
   const maxCount = items[0]?.count ?? 1;
@@ -77,6 +77,9 @@ export function TopIssues({ year, periodStart, periodEnd, enabled = true }: TopI
                       </span>
                       <div className="min-w-0">
                         <span className="block truncate font-medium leading-tight">{item.category}</span>
+                        {item.systemComponent && (
+                          <span className="block truncate text-xs text-foreground/70">{item.systemComponent}</span>
+                        )}
                         <span className="block truncate text-xs text-muted-foreground">{item.mainGroup}</span>
                       </div>
                     </div>

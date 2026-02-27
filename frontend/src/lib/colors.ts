@@ -39,6 +39,15 @@ export const RISK_LEVEL_COLORS: Record<string, string> = {
   Low:      '#70AD47', // riskScore  1– 4 — 許容範囲
 };
 
+// 16-color qualitative palette (ColorBrewer-inspired) — distinct regardless of classification
+// Used by TrendChart so each category gets a stable, unique color across renders.
+export const CATEGORY_PALETTE: string[] = [
+  '#e41a1c', '#377eb8', '#4daf4a', '#984ea3',
+  '#ff7f00', '#a65628', '#f781bf', '#999999',
+  '#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3',
+  '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3',
+];
+
 // Bubble size weights for Impact Scope (影響範囲) in Risk Matrix
 export const IMPACT_SCOPE_WEIGHTS: Record<string, number> = {
   Individual: 15,  // 個人

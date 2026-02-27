@@ -16,6 +16,7 @@ import { ParetoChart } from '@/components/reports/ParetoChart';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import api from '@/lib/api';
+import { SLA_CONFIG, PERIOD_TOTAL_MINUTES } from '@/lib/slaConfig';
 import { currentIsoYear, currentWeekCode } from '@/lib/utils';
 import type { ApiList, DashboardMetricFilter, Event } from '@/types';
 
@@ -95,6 +96,17 @@ export default function DashboardPage() {
     year,
   ]);
 
+  // ── SLA context for KPI cards ────────────────────────────────────────────────
+  const periodMin = PERIOD_TOTAL_MINUTES[granularity] ?? PERIOD_TOTAL_MINUTES.week;
+  const slaDowntimeMaxMin = Math.round(periodMin * (100 - SLA_CONFIG.uptimePct) / 100);
+
+  const downtimeMin = summary?.kpis.downtimeMinutes.value ?? 0;
+  const uptimePct   = 100 - (downtimeMin / periodMin) * 100;
+  const uptimeMet   = uptimePct >= SLA_CONFIG.uptimePct;
+
+  const closureRate    = summary?.kpis.closureRate.value ?? 0;
+  const closureMet     = closureRate >= SLA_CONFIG.closureRatePct;
+
   const kpiCards = [
     {
       key: 'totalEvents',
@@ -105,11 +117,17 @@ export default function DashboardPage() {
       key: 'downtimeMinutes',
       title: t('dashboard.kpis.downtimeMinutes'),
       filter: 'downtime' as DashboardMetricFilter,
+      displayValue: `${uptimePct.toFixed(2)}%`,
+      subLabel: t('dashboard.sla.downtimeSubLabel', { min: downtimeMin, max: slaDowntimeMaxMin }),
+      slaInfo: { label: t('dashboard.sla.uptimeTarget', { pct: SLA_CONFIG.uptimePct }), met: uptimeMet },
     },
     {
       key: 'closureRate',
       title: t('dashboard.kpis.closureRate'),
       filter: 'closure' as DashboardMetricFilter,
+      displayValue: `${closureRate.toFixed(1)}%`,
+      subLabel: t('dashboard.sla.closureSubLabel', { target: SLA_CONFIG.closureRatePct }),
+      slaInfo: { label: `≥${SLA_CONFIG.closureRatePct}%`, met: closureMet },
     },
     {
       key: 'severeIncidents',
@@ -175,6 +193,11 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
             {kpiCards.map((card) => {
               const metric = summary?.kpis[card.key];
+              const extra = 'displayValue' in card ? {
+                displayValue: card.displayValue,
+                subLabel:     card.subLabel,
+                slaInfo:      card.slaInfo,
+              } : {};
               return (
                 <KpiCard
                   key={card.key}
@@ -184,6 +207,7 @@ export default function DashboardPage() {
                   sparkline={metric?.sparkline ?? Array.from({ length: 12 }, () => 0)}
                   onClick={() => setMetricFilter(card.filter)}
                   active={metricFilter === card.filter}
+                  {...extra}
                 />
               );
             })}

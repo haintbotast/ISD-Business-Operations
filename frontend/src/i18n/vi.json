@@ -143,10 +143,15 @@
     "timeRange": "Khoảng thời gian",
     "kpis": {
       "totalEvents": "Tổng sự kiện",
-      "downtimeMinutes": "Downtime (phút)",
-      "closureRate": "Tỷ lệ đóng (%)",
+      "downtimeMinutes": "Uptime hệ thống",
+      "closureRate": "Tỷ lệ xử lý",
       "severeIncidents": "Sự kiện nghiêm trọng",
       "openInProgress": "Open/In Progress"
+    },
+    "sla": {
+      "downtimeSubLabel": "{{min}} phút downtime · SLA ≤ {{max}} phút",
+      "uptimeTarget": "SLA ≥ {{pct}}%",
+      "closureSubLabel": "Mục tiêu ≥ {{target}}%"
     },
     "presets": {
       "current": "Kỳ này",

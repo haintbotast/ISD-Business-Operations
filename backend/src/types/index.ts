@@ -278,6 +278,7 @@ export interface RiskMatrixResponse {
 export interface ParetoItem {
   category: string;
   mainGroup: string;
+  systemComponent?: string;  // dominant system component in this (category, systemComponent) group
   classification: 'Good' | 'Bad' | 'Neutral';
   count: number;
   percentage: number;   // % of total

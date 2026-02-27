@@ -49,7 +49,7 @@ export function useRiskMatrix(
 // ─── FR-013: Pareto Analysis (JIS Z 8115) ─────────────────────────────────────
 
 export function usePareto(
-  params: { year: number; periodStart?: string; periodEnd?: string },
+  params: { year: number; periodStart?: string; periodEnd?: string; classificationFilter?: 'Bad' | 'all' },
   enabled = true,
 ) {
   return useQuery<ParetoData>({

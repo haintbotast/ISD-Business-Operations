@@ -64,7 +64,7 @@ export function ParetoChart({ initialYear, initialPeriodStart, initialPeriodEnd 
   const splitIdx      = items.findIndex((item) => item.cumulative >= 80);
   const priorityCount = splitIdx === -1 ? items.length : splitIdx + 1;
   const priorityPct   = splitIdx === -1
-    ? (items.at(-1)?.cumulative ?? 0)
+    ? (items[items.length - 1]?.cumulative ?? 0)
     : (items[splitIdx]?.cumulative ?? 0);
   const remainderPct   = Number((100 - priorityPct).toFixed(1));
   const remainderCount = items.length - priorityCount;

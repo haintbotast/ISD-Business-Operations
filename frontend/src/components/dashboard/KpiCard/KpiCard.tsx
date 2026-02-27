@@ -10,6 +10,12 @@ interface KpiCardProps {
   sparkline: number[];
   onClick?: () => void;
   active?: boolean;
+  /** Override the displayed value string (e.g. "99.8%") */
+  displayValue?: string;
+  /** Small subtitle below the value (e.g. "0 phút · SLA ≤ 50 phút/tuần") */
+  subLabel?: string;
+  /** SLA badge shown next to delta (e.g. { label: 'SLA ≥ 99.5%', met: true }) */
+  slaInfo?: { label: string; met: boolean };
 }
 
 function formatNumber(value: number): string {
@@ -21,7 +27,10 @@ function formatDelta(value: number): string {
   return `${sign}${value.toFixed(1)}%`;
 }
 
-export function KpiCard({ title, value, deltaPct, sparkline, onClick, active = false }: KpiCardProps) {
+export function KpiCard({
+  title, value, deltaPct, sparkline, onClick, active = false,
+  displayValue, subLabel, slaInfo,
+}: KpiCardProps) {
   const isPositive = deltaPct > 0;
   const isNegative = deltaPct < 0;
   const deltaClass = isPositive ? 'text-emerald-600' : isNegative ? 'text-red-600' : 'text-muted-foreground';
@@ -40,11 +49,26 @@ export function KpiCard({ title, value, deltaPct, sparkline, onClick, active = f
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="text-2xl font-bold">{formatNumber(value)}</div>
+        <div className="text-2xl font-bold">{displayValue ?? formatNumber(value)}</div>
+        {subLabel && (
+          <div className="text-xs text-muted-foreground leading-tight">{subLabel}</div>
+        )}
 
-        <div className={cn('flex items-center gap-1 text-xs font-medium', deltaClass)}>
-          <DeltaIcon className="h-3.5 w-3.5" />
-          <span>{formatDelta(deltaPct)}</span>
+        <div className="flex items-center gap-2">
+          <div className={cn('flex items-center gap-1 text-xs font-medium', deltaClass)}>
+            <DeltaIcon className="h-3.5 w-3.5" />
+            <span>{formatDelta(deltaPct)}</span>
+          </div>
+          {slaInfo && (
+            <span
+              className={cn(
+                'rounded px-1.5 py-0.5 text-xs font-medium',
+                slaInfo.met ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700',
+              )}
+            >
+              {slaInfo.label}
+            </span>
+          )}
         </div>
 
         <div className="h-14">

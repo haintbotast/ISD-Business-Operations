@@ -15,11 +15,11 @@ services:
     build:
       context: ./backend
       target: dev                    # Uses the 'dev' stage (ts-node-dev + hot reload)
-    # Run migrations + seed on every startup (upserts are idempotent), then start dev server
+    # Run migrations on every startup; seed manually to avoid wiping imported events
+    # To seed fresh: docker exec <backend> npx prisma db seed
     command: >
       sh -c "
         npx prisma migrate deploy &&
-        npx prisma db seed &&
         npm run dev
       "
     ports:
@@ -28,6 +28,7 @@ services:
       - ./backend/src:/app/src       # Hot-reload source changes
       - ./backend/prisma:/app/prisma # Schema + migration files (written back to host)
       - ./BS24_ISD_Operations_Template_2026.xlsx:/app/BS24_ISD_Operations_Template_2026.xlsx:ro
+      - "./BÁO CÁO CHI TIẾT_BỘ PHẬN ISD_2026 (1).xlsx:/app/baocao.xlsx:ro"
       - ./data:/data                 # SQLite database (DATABASE_URL=file:/data/isd_oms.db)
       - ./backups:/backups
     env_file:

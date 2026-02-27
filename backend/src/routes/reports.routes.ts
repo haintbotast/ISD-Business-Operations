@@ -19,6 +19,7 @@ const paretoSchema = z.object({
   year: z.coerce.number().int().min(2020).max(2100),
   periodStart: z.string().regex(weekCodePattern).optional(),
   periodEnd: z.string().regex(weekCodePattern).optional(),
+  classificationFilter: z.enum(['Bad', 'all']).optional().default('all'),
 });
 
 /**
