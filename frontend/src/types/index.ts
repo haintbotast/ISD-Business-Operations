@@ -104,6 +104,13 @@ export interface CategoryMaster {
   sortOrder: number;
 }
 
+export interface SystemComponentMaster {
+  id: string;
+  name: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface User {
   id: string;
   username: string;

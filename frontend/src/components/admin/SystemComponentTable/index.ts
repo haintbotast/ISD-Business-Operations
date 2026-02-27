@@ -1,0 +1,1 @@
+export { SystemComponentTable } from './SystemComponentTable';

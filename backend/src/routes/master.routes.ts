@@ -100,4 +100,49 @@ router.put(
   }),
 );
 
+// ─── System Component Routes ──────────────────────────────────────────────────
+
+const createSystemComponentSchema = z.object({
+  name: z.string().min(1).max(100),
+  sortOrder: z.number().int().min(0).optional(),
+});
+
+const updateSystemComponentSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  isActive: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).optional(),
+});
+
+router.get(
+  '/system-components',
+  authMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    const includeInactive = req.query.all === 'true' && req.user!.role === 'Admin';
+    const items = await masterService.listSystemComponents(includeInactive);
+    res.json({ success: true, data: items });
+  }),
+);
+
+router.post(
+  '/system-components',
+  authMiddleware,
+  requireRole('Admin'),
+  asyncHandler(async (req: Request, res: Response) => {
+    const data = createSystemComponentSchema.parse(req.body);
+    const item = await masterService.createSystemComponent(data);
+    res.status(201).json({ success: true, data: item });
+  }),
+);
+
+router.put(
+  '/system-components/:id',
+  authMiddleware,
+  requireRole('Admin'),
+  asyncHandler(async (req: Request, res: Response) => {
+    const data = updateSystemComponentSchema.parse(req.body);
+    const item = await masterService.updateSystemComponent(req.params.id, data);
+    res.json({ success: true, data: item });
+  }),
+);
+
 export default router;

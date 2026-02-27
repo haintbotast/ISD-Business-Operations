@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { CategoryTable } from '@/components/admin/CategoryTable';
 import { LocationTable } from '@/components/admin/LocationTable';
+import { SystemComponentTable } from '@/components/admin/SystemComponentTable';
 import { UserTable } from '@/components/admin/UserTable';
 import { ImportWizard } from '@/components/admin/ImportWizard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,6 +20,7 @@ export default function AdminPage() {
         <TabsList>
           <TabsTrigger value="categories">{t('admin.categories')}</TabsTrigger>
           <TabsTrigger value="locations">{t('admin.locations')}</TabsTrigger>
+          <TabsTrigger value="systemComponents">{t('admin.systemComponents')}</TabsTrigger>
           {isAdmin && <TabsTrigger value="users">{t('admin.users')}</TabsTrigger>}
           <TabsTrigger value="import">{t('admin.import')}</TabsTrigger>
         </TabsList>
@@ -29,6 +31,10 @@ export default function AdminPage() {
 
         <TabsContent value="locations" className="pt-2">
           <LocationTable />
+        </TabsContent>
+
+        <TabsContent value="systemComponents" className="pt-2">
+          <SystemComponentTable />
         </TabsContent>
 
         {isAdmin && (

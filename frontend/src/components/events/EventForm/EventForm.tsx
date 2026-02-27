@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useSystemComponents } from '@/hooks/useAdmin';
 import type { Event, LocationMaster, CategoryMaster, ApiError } from '@/types';
 
 // ─── Zod schema ───────────────────────────────────────────────────────────────
@@ -75,6 +76,8 @@ export function EventForm({ eventId }: EventFormProps) {
     queryFn: () => api.get('/categories').then((r) => r.data.data),
     staleTime: 5 * 60_000,
   });
+
+  const { data: systemComponents = [] } = useSystemComponents();
 
   // ── Load existing event (edit mode) ───────────────────────────────────────
 
@@ -395,10 +398,20 @@ export function EventForm({ eventId }: EventFormProps) {
           {/* System component */}
           <div className="space-y-1 md:col-span-3">
             <Label>{t('event.fields.systemComponent')}</Label>
-            <Input
-              placeholder="e.g. API Gateway, DB Server 01"
-              {...form.register('systemComponent')}
-            />
+            <Select
+              value={form.watch('systemComponent') ?? ''}
+              onValueChange={(v) => form.setValue('systemComponent', v === '__none__' ? undefined : v, { shouldDirty: true })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">—</SelectItem>
+                {systemComponents.map((sc) => (
+                  <SelectItem key={sc.id} value={sc.name}>{sc.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

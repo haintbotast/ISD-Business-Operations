@@ -160,7 +160,7 @@
       "year": "Năm"
     },
     "autoAdjustedRange": "Không có dữ liệu ở tuần hiện tại. Đã chuyển sang tuần gần nhất có dữ liệu.",
-    "events": "sự cố",
+    "events": "sự kiện",
     "tab": {
       "overview": "Tổng quan",
       "analysis": "Phân tích",
@@ -263,6 +263,7 @@
     "title": "Quản trị",
     "categories": "Danh mục",
     "locations": "Địa điểm",
+    "systemComponents": "Thành phần HT",
     "users": "Người dùng",
     "import": "Nhập dữ liệu",
     "roles": {
@@ -305,6 +306,16 @@
       "createSuccess": "Đã tạo người dùng",
       "updateSuccess": "Đã cập nhật người dùng",
       "resetPasswordSuccess": "Đã đặt lại mật khẩu"
+    },
+    "systemComponent": {
+      "name": "Tên thành phần",
+      "isActive": "Đang hoạt động",
+      "sortOrder": "Thứ tự",
+      "createTitle": "Thêm thành phần HT",
+      "editTitle": "Chỉnh sửa thành phần HT",
+      "createSuccess": "Đã thêm thành phần",
+      "updateSuccess": "Đã cập nhật thành phần",
+      "renameWarning": "Đổi tên sẽ tự động cập nhật tất cả sự kiện liên quan."
     }
   },
   "import": {

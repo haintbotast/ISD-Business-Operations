@@ -125,6 +125,16 @@ model EventDraft {
   @@map("event_drafts")
 }
 
+model SystemComponentMaster {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0)    @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_components")
+}
+
 // ─── v1.1 Placeholder (DO NOT implement in v1.0) ─────────────────────────────
 // field_definitions table is intentionally NOT created in v1.0.
 // Schema will be added in the v1.1 migration sprint.

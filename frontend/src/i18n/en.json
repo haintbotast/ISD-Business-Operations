@@ -160,7 +160,7 @@
       "year": "Year"
     },
     "autoAdjustedRange": "No data for current week. Switched to the nearest week with data.",
-    "events": "incidents",
+    "events": "events",
     "tab": {
       "overview": "Overview",
       "analysis": "Analysis",
@@ -263,6 +263,7 @@
     "title": "Admin",
     "categories": "Categories",
     "locations": "Locations",
+    "systemComponents": "Sys. Components",
     "users": "Users",
     "import": "Import Data",
     "roles": {
@@ -305,6 +306,16 @@
       "createSuccess": "User created",
       "updateSuccess": "User updated",
       "resetPasswordSuccess": "Password reset"
+    },
+    "systemComponent": {
+      "name": "Component Name",
+      "isActive": "Active",
+      "sortOrder": "Sort Order",
+      "createTitle": "Add Component",
+      "editTitle": "Edit Component",
+      "createSuccess": "Component added",
+      "updateSuccess": "Component updated",
+      "renameWarning": "Renaming will automatically update all related events."
     }
   },
   "import": {

@@ -7,6 +7,7 @@ import type {
   ImportExecuteData,
   ImportPreviewData,
   LocationMaster,
+  SystemComponentMaster,
   UpdateUserDto,
   UserDto,
 } from '@/types';
@@ -70,6 +71,39 @@ export function useUpdateLocation() {
     mutationFn: ({ id, ...data }: { id: string; fullName?: string; isActive?: boolean; sortOrder?: number }) =>
       api.put<ApiSuccess<LocationMaster>>(`/locations/${id}`, data).then((r) => r.data.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['locations'] }),
+  });
+}
+
+// ─── System Components ────────────────────────────────────────────────────────
+
+export function useSystemComponents(all = false) {
+  return useQuery<SystemComponentMaster[]>({
+    queryKey: ['system-components', all ? 'all' : 'active'],
+    queryFn: async () => {
+      const res = await api.get<ApiSuccess<SystemComponentMaster[]>>('/system-components', {
+        params: all ? { all: 'true' } : {},
+      });
+      return res.data.data;
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useCreateSystemComponent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { name: string; sortOrder?: number }) =>
+      api.post<ApiSuccess<SystemComponentMaster>>('/system-components', data).then((r) => r.data.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['system-components'] }),
+  });
+}
+
+export function useUpdateSystemComponent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: string; name?: string; isActive?: boolean; sortOrder?: number }) =>
+      api.put<ApiSuccess<SystemComponentMaster>>(`/system-components/${id}`, data).then((r) => r.data.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['system-components'] }),
   });
 }
 

@@ -96,4 +96,40 @@ export const masterService = {
     if (!loc) throw new AppError(404, 'LOCATION_NOT_FOUND', 'Location not found');
     return prisma.locationMaster.update({ where: { id }, data });
   },
+
+  // ─── System Components ───────────────────────────────────────────────────────
+
+  async listSystemComponents(includeInactive = false) {
+    return prisma.systemComponentMaster.findMany({
+      where: includeInactive ? {} : { isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+    });
+  },
+
+  async createSystemComponent(data: { name: string; sortOrder?: number }) {
+    const exists = await prisma.systemComponentMaster.findUnique({ where: { name: data.name } });
+    if (exists) throw new AppError(409, 'COMPONENT_EXISTS', 'System component already exists');
+    return prisma.systemComponentMaster.create({
+      data: { name: data.name, sortOrder: data.sortOrder ?? 0 },
+    });
+  },
+
+  async updateSystemComponent(id: string, data: { name?: string; isActive?: boolean; sortOrder?: number }) {
+    const item = await prisma.systemComponentMaster.findUnique({ where: { id } });
+    if (!item) throw new AppError(404, 'COMPONENT_NOT_FOUND', 'System component not found');
+    if (data.name && data.name !== item.name) {
+      const conflict = await prisma.systemComponentMaster.findUnique({ where: { name: data.name } });
+      if (conflict) throw new AppError(409, 'COMPONENT_EXISTS', 'System component name already exists');
+      // Cascade rename to events
+      return prisma.$transaction(async (tx: PrismaTxClient) => {
+        const updated = await tx.systemComponentMaster.update({ where: { id }, data });
+        await tx.event.updateMany({
+          where: { systemComponent: item.name, deletedAt: null },
+          data: { systemComponent: data.name },
+        });
+        return updated;
+      });
+    }
+    return prisma.systemComponentMaster.update({ where: { id }, data });
+  },
 };
